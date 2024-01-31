@@ -1,0 +1,276 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    type="text/css">
+  <link rel="stylesheet" href="{% static 'cinema_teach/modules.css' %}">
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-md navbar-dark bg-primary">
+    <div class="container"> <button class="navbar-toggler navbar-toggler-right border-0" type="button"
+        data-toggle="collapse" data-target="#navbar19" style="">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbar19"> <a class="navbar-brand d-none d-md-block" href="#">
+          <i class="fa d-inline fa-lg fa-stop-circle-o"></i>
+          <b> CINEMAT'TEACH</b>
+        </a>
+        <ul class="navbar-nav mx-auto" id="pages">
+          <li class="nav-item" style=""> <a class="nav-link" href="index.html"><b style="">Acceuil</b></a> </li>
+          <li class="nav-item"> <a class="nav-link active" href="modules.html">Modules</a> </li>
+          <li class="nav-item"> <a class="nav-link" href="dashboard.html">Dashboard</a> </li>
+        </ul>
+        <ul class="navbar-nav" id="profile">
+          <li class="nav-item w-100" style="	width: 50px;	height: 30px;"><a class="nav-link" href="login.html"><i
+                class="fa fa-user fa-fw" style=""></i></a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div class="">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <h1 class="pt-3">Cinématique du point</h1>
+        </div>
+        <div class="col-md-6 d-flex justify-content-center">
+          <div class="btn-group align-items-center w-75 pt-3"> <a href="#"
+              class="btn btn-outline-primary">Paramétrage</a> <a href="#" class="btn btn-primary">Résultats</a> </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="py-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-header"> Paramétrage</div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-12 border-primary border-bottom">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <h4 class="">Import des images</h4>
+                      {% if nom_fichier %}
+                      {% else %}
+                      <p>Aucun fichier importé</p>
+                      {% endif %}
+                    </div>
+                    <div class="col-md-6 d-flex justify-content-end"><a class="btn btn-outline-primary" href="#"
+                        data-toggle="modal" data-target="#import-img">Importer&nbsp;<i class="fa fa-fw fa-camera"></i>
+                      </a></div>
+                  </div>
+                  <div class="row flex-nowrap overflow-auto pb-0 mb-1" id="pictures">
+                    <div class="col-md-3"><img class="d-block py-2 img-fluid"
+                        src="https://static.pingendo.com/img-placeholder-1.svg"></div>
+                    <div class="col-md-3 py-2"><img class="img-fluid d-block"
+                        src="https://static.pingendo.com/img-placeholder-1.svg"></div>
+                    <div class="col-md-3 py-2"><img class="img-fluid d-block"
+                        src="https://static.pingendo.com/img-placeholder-1.svg"></div>
+                    <div class="col-md-3 py-2"><img class="img-fluid d-block"
+                        src="https://static.pingendo.com/img-placeholder-1.svg"></div>
+                    <div class="col-md-3 py-2"><img class="img-fluid d-block"
+                        src="https://static.pingendo.com/img-placeholder-1.svg"></div>
+                        <div class="col-md-3 py-2"><img class="img-fluid d-block"
+                          src="https://static.pingendo.com/img-placeholder-1.svg"></div>
+                          <div class="col-md-3 py-2"><img class="img-fluid d-block"
+                            src="https://static.pingendo.com/img-placeholder-1.svg"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <h4 class="pt-3">Gestion des paramètres</h4>
+                  <div class="row">
+                    <div class="col-md-12">
+                      <form id="c_form-h" class="">
+                        <div class="form-group row"> <label for="inputmailh" class="col-form-label col-3">Alpha</label>
+                          <div class="col-9">
+                            <input type="text" class="form-control" id="inputalpha" placeholder="Insérer un nombre"
+                              required="required">
+                          </div>
+                        </div>
+                        <div class="form-group row"> <label for="inputpasswordh"
+                            class="col-form-label col-3">Beta</label>
+                          <div class="col-9">
+                            <input type="text" class="form-control" id="inputbeta" placeholder="Insérer un nombre"
+                              required="required">
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="py-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-header"> Résultats</div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-12 border-primary border-bottom">
+                  <h4 class="">Aperçu image</h4>
+                  <div class="row flex-nowrap overflow-auto pb-0 mb-1" id="pictures">
+                    <div class="col-md-3"><img class="d-block py-2 img-fluid"
+                        src="https://static.pingendo.com/img-placeholder-1.svg"></div>
+                    <div class="col-md-3 py-2"><img class="img-fluid d-block"
+                        src="https://static.pingendo.com/img-placeholder-1.svg"></div>
+                    <div class="col-md-3 py-2"><img class="img-fluid d-block"
+                        src="https://static.pingendo.com/img-placeholder-1.svg"></div>
+                    <div class="col-md-3 py-2"><img class="img-fluid d-block"
+                        src="https://static.pingendo.com/img-placeholder-1.svg"></div>
+                    <div class="col-md-3"><img class="img-fluid d-block"
+                        src="https://static.pingendo.com/img-placeholder-1.svg"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="row border-bottom border-primary">
+                <div class="col-md-12">
+                  <h4 class="pt-3">Graphiques</h4>
+                  <div class="row">
+                    <div class="col-md-12 d-flex justify-content-center"><img class="d-block img-fluid"
+                        src="{% static 'cinema_teach/positionc.png' %}"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="row border-bottom border-primary">
+                <div class="col-md-12">
+                  <h4 class="pt-3">Tableaux</h4>
+                  <div class="row">
+                    <div class="col-md-12 d-flex justify-content-center">
+                      <table id="table" data-pagination="true" data-show-columns="true" data-show-export="true">
+                        <thead>
+                          <tr>
+                            <th data-field="id" data-width="100">ID</th>
+                            <th data-field="name" data-width="300">Item Name</th>
+                            <th data-field="price" data-width="200">Item Price</th>
+                          </tr>
+                        </thead>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal" id="import-img" style="">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"> Importer des images</h5> <button type="button" class="close" data-dismiss="modal">
+            <span>×</span> </button>
+        </div>
+        <div class="modal-body">
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Importer</button>
+
+        </div>
+        <div class="modal-footer"> <button type="submit" class="btn btn-primary">Save changes</button> <button
+            type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> </div>
+          </form>
+      </div>
+    </div>
+  </div>
+  <div class="py-3">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12 text-center d-md-flex align-items-center"> <i
+            class="d-block fa fa-stop-circle fa-2x mr-md-5 text-primary"></i>
+          <ul class="nav mx-md-auto d-flex justify-content-center">
+            <li class="nav-item"> <a class="nav-link active" href="#">Home</a> </li>
+            <li class="nav-item"> <a class="nav-link" href="#">Features</a> </li>
+            <li class="nav-item"> <a class="nav-link" href="#">Pricing</a> </li>
+            <li class="nav-item"> <a class="nav-link" href="#">About</a> </li>
+          </ul>
+          <div class="row">
+            <div class="col-md-12 d-flex align-items-center justify-content-md-between justify-content-center my-2"> <a
+                href="#">
+                <i class="d-block fa fa-facebook-official text-muted fa-lg mx-2"></i>
+              </a> <a href="#">
+                <i class="d-block fa fa-instagram text-muted fa-lg mx-2"></i>
+              </a> <a href="#">
+                <i class="d-block fa fa-twitter text-muted fa-lg ml-2"></i>
+              </a> </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <p class="mt-2 mb-0">© 2014-2018 Pingendo. All rights reserved</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+    integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+  <link href="https://unpkg.com/bootstrap-table@1.22.1/dist/bootstrap-table.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/tableexport.jquery.plugin@1.10.21/tableExport.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tableexport.jquery.plugin@1.10.21/libs/jsPDF/jspdf.min.js"></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/tableexport.jquery.plugin@1.10.21/libs/jsPDF-AutoTable/jspdf.plugin.autotable.js"></script>
+  <script src="https://unpkg.com/bootstrap-table@1.22.1/dist/bootstrap-table.min.js"></script>
+  <script src="https://unpkg.com/bootstrap-table@1.22.1/dist/extensions/export/bootstrap-table-export.min.js"></script>
+  <script>
+    var $table = $('#table')
+    $(function () {
+      var data = [{
+        'id': 0,
+        'name': 'Item 0',
+        'price': '$0'
+      }, {
+        'id': 1,
+        'name': 'Item 1',
+        'price': '$1'
+      }, {
+        'id': 2,
+        'name': 'Item 2',
+        'price': '$2'
+      }, {
+        'id': 3,
+        'name': 'Item 3',
+        'price': '$3'
+      }, {
+        'id': 4,
+        'name': 'Item 4',
+        'price': '$4'
+      }, {
+        'id': 5,
+        'name': 'Item 5',
+        'price': '$5'
+      }]
+      $table.bootstrapTable({
+        data: data
+      })
+    })
+  </script>
+</body>
+
+</html>
