@@ -42,3 +42,23 @@ def point(request):
         form = ImportForm()
 
     return render(request, 'cinema_teach/point.html', {'form': form})
+
+def solide(request):
+    if request.method == 'POST':
+        form = ImportForm(request.POST, request.FILES)
+        if form.is_valid() & (request.FILES['fichier'] != None):
+            fichier_upload = request.FILES['fichier']
+            nom_fichier = str(time.time()).replace(".","-")+"."+fichier_upload.name.split(".")[1]
+            destination = open('media/{}'.format(nom_fichier), 'wb+')
+            for chunk in fichier_upload.chunks():
+                destination.write(chunk)
+            destination.close()
+            print(nom_fichier)
+            tab_images, paths = img_traitment.fichier_video_en_images(nom_fichier)
+            print(paths)
+            # Vous pouvez effectuer d'autres opérations ici si nécessaire
+            return render(request, 'cinema_teach/solide.html', {'nom_fichier': nom_fichier, 'paths': paths})
+    else:
+        form = ImportForm()
+
+    return render(request, 'cinema_teach/solide.html', {'form': form})
