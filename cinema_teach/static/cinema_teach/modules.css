@@ -7125,4 +7125,21 @@ a.text-dark:hover, a.text-dark:focus {
     border-color: #dee2e6; } }
 
 #pages {
-  font-weight: bold; }
+  font-weight: bold;
+}
+
+#loader-container {
+    width: 100%;
+    height: 30px;
+    position: relative;
+    border: 1px solid #ccc;
+    overflow: hidden;
+}
+
+#loader-bar {
+    width: 0;
+    height: 100%;
+    background-color: #4CAF50;
+    position: absolute;
+    transition: width 1s ease-in-out;
+}

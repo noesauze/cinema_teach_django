@@ -22,9 +22,9 @@
           <b> CINEMAT'TEACH</b>
         </a>
         <ul class="navbar-nav mx-auto" id="pages">
-          <li class="nav-item" style=""> <a class="nav-link" href="index.html"><b style="">Acceuil</b></a> </li>
-          <li class="nav-item"> <a class="nav-link active" href="modules.html">Modules</a> </li>
-          <li class="nav-item"> <a class="nav-link" href="dashboard.html">Dashboard</a> </li>
+          <li class="nav-item" style=""> <a class="nav-link" href="/"><b style="">Accueil</b></a> </li>
+          <li class="nav-item"> <a class="nav-link active" href="/modules">Modules</a> </li>
+          <li class="nav-item"> <a class="nav-link" href="/">Dashboard</a> </li>
         </ul>
         <ul class="navbar-nav" id="profile">
           <li class="nav-item w-100" style="	width: 50px;	height: 30px;"><a class="nav-link" href="login.html"><i
@@ -41,7 +41,7 @@
         </div>
         <div class="col-md-6 d-flex justify-content-center">
           <div class="btn-group align-items-center w-75 pt-3"> <a href="#"
-              class="btn btn-outline-primary">Paramétrage</a> <a href="#" class="btn btn-primary">Résultats</a> </div>
+              class="btn btn-primary">Paramétrage</a> <a href="#" class="btn btn-outline-primary">Résultats</a> </div>
         </div>
       </div>
     </div>
@@ -67,22 +67,30 @@
                         data-toggle="modal" data-target="#import-img">Importer&nbsp;<i class="fa fa-fw fa-camera"></i>
                       </a></div>
                   </div>
+                  {% if paths %}
                   <div class="row flex-nowrap overflow-auto pb-0 mb-1" id="pictures">
-                    <div class="col-md-3"><img class="d-block py-2 img-fluid"
-                        src="https://static.pingendo.com/img-placeholder-1.svg"></div>
-                    <div class="col-md-3 py-2"><img class="img-fluid d-block"
-                        src="https://static.pingendo.com/img-placeholder-1.svg"></div>
-                    <div class="col-md-3 py-2"><img class="img-fluid d-block"
-                        src="https://static.pingendo.com/img-placeholder-1.svg"></div>
-                    <div class="col-md-3 py-2"><img class="img-fluid d-block"
-                        src="https://static.pingendo.com/img-placeholder-1.svg"></div>
-                    <div class="col-md-3 py-2"><img class="img-fluid d-block"
-                        src="https://static.pingendo.com/img-placeholder-1.svg"></div>
-                        <div class="col-md-3 py-2"><img class="img-fluid d-block"
-                          src="https://static.pingendo.com/img-placeholder-1.svg"></div>
-                          <div class="col-md-3 py-2"><img class="img-fluid d-block"
-                            src="https://static.pingendo.com/img-placeholder-1.svg"></div>
+                    {% for path in paths %}
+                    <div class="col-md-3 py-2"><img class="d-block img-fluid" src="{{ path }}">{{ forloop.counter0 }}</div>
+                    {% endfor %}
                   </div>
+                  {% else %}
+                  <div class="row flex-nowrap overflow-auto pb-0 mb-1" id="pictures">
+                    <div class="col-md-3 py-2"><img class="d-block img-fluid"
+                        src="https://static.pingendo.com/img-placeholder-1.svg"></div>
+                    <div class="col-md-3 py-2"><img class="img-fluid d-block"
+                        src="https://static.pingendo.com/img-placeholder-1.svg"></div>
+                    <div class="col-md-3 py-2"><img class="img-fluid d-block"
+                        src="https://static.pingendo.com/img-placeholder-1.svg"></div>
+                    <div class="col-md-3 py-2"><img class="img-fluid d-block"
+                        src="https://static.pingendo.com/img-placeholder-1.svg"></div>
+                    <div class="col-md-3 py-2"><img class="img-fluid d-block"
+                        src="https://static.pingendo.com/img-placeholder-1.svg"></div>
+                    <div class="col-md-3 py-2"><img class="img-fluid d-block"
+                        src="https://static.pingendo.com/img-placeholder-1.svg"></div>
+                    <div class="col-md-3 py-2"><img class="img-fluid d-block"
+                        src="https://static.pingendo.com/img-placeholder-1.svg"></div>
+                  </div>
+                  {% endif %}
                 </div>
               </div>
               <div class="row">
@@ -90,20 +98,29 @@
                   <h4 class="pt-3">Gestion des paramètres</h4>
                   <div class="row">
                     <div class="col-md-12">
-                      <form id="c_form-h" class="">
-                        <div class="form-group row"> <label for="inputmailh" class="col-form-label col-3">Alpha</label>
+                      <form id="c_form-h" method="POST" action="/modules/point/">
+                        {% csrf_token %}
+                        <div class="form-group row"> <label for="debut" class="col-form-label col-3">Début du mouvement</label>
                           <div class="col-9">
-                            <input type="text" class="form-control" id="inputalpha" placeholder="Insérer un nombre"
+                            <input type="text" class="form-control" id="debut" placeholder="Insérer un nombre"
                               required="required">
                           </div>
                         </div>
-                        <div class="form-group row"> <label for="inputpasswordh"
-                            class="col-form-label col-3">Beta</label>
+                        <div class="form-group row"> <label for="fin"
+                            class="col-form-label col-3">Fin du mouvement</label>
                           <div class="col-9">
-                            <input type="text" class="form-control" id="inputbeta" placeholder="Insérer un nombre"
+                            <input type="text" class="form-control" id="fin" placeholder="Insérer un nombre"
                               required="required">
                           </div>
                         </div>
+                        <div class="form-group row"> <label for="taille-objet"
+                          class="col-form-label col-3">Taille de l'objet en cm</label>
+                        <div class="col-9">
+                          <input type="text" class="form-control" id="taille-objet" placeholder="Insérer un nombre"
+                            required="required">
+                        </div>
+                      </div>
+                      <button type="submit" class="btn btn-primary">Traiter</button>
                       </form>
                     </div>
                   </div>
@@ -183,12 +200,12 @@
           <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit">Importer</button>
-
+        
+            
         </div>
         <div class="modal-footer"> <button type="submit" class="btn btn-primary">Save changes</button> <button
             type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> </div>
-          </form>
+        </form>
       </div>
     </div>
   </div>

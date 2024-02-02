@@ -41,17 +41,18 @@ def video_en_image(video, nom_fichier):
         video.set(cv2.CAP_PROP_POS_FRAMES,frame)
         success,image=video.read()
         if success:
-            cv2.imwrite(f'cache/{nom_fichier + "_"+ str(frame)}.png',image)
-            paths.append('cache/{nom_fichier + "_"+ str(frame)}.png')
+            path = "/static/cinema_teach/cache/"+nom_fichier + "_"+ str(frame)+ ".png"
+            cv2.imwrite(f'cinema_teach/static/cinema_teach/cache/{nom_fichier + "_"+ str(frame)}.png',image)
+            paths.append(path)
     return total_frame, paths
 
 #Fonction principal qui prend en paramètre une vidéo et la transforme en un tableau avec l'ensemble des centres de l'objet
 def video_en_donne(total_frame, nom_fichier, video):
     tab_donne=[]
-    fond=cv2.imread("cache/"+nom_fichier + "_0.png")
+    fond=cv2.imread("cinema_teach/static/cinema_teach/cache/"+nom_fichier + "_0.png")
     gray_fond = cv2.cvtColor(fond, cv2.COLOR_BGR2GRAY)
     for i in range (total_frame):
-        nom = "cache/"+ nom_fichier + "_"+ str(i)+".png"
+        nom = "cinema_teach/static/cinema_teach/cache/"+ nom_fichier + "_"+ str(i)+".png"
         image=cv2.imread(f"{nom}")
         masque=calcul_masque(image=image,gray_fond=gray_fond,seuil=10)
         tab_donne.append((calcul_centre(masque=masque),i/(video.get(cv2.CAP_PROP_FPS))))

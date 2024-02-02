@@ -1,7 +1,9 @@
 <!-- importer_fichier.html -->
+<form method="post" enctype="multipart/form-data"></form>
+<div class="modal-body">
 
-<form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Importer</button>
+</div>
+<div class="modal-footer"> <button type="submit" class="btn btn-primary">Save changes</button>
 </form>
