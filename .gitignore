@@ -2,4 +2,5 @@ cache/
 cinema_teach/__pycache__/
 cinema_teach/migrations/
 cinema_teach_django/__pycache__/
-log/
+log/django.log
+static/cinema_teach/cache
