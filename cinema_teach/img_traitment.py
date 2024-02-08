@@ -63,3 +63,6 @@ def fichier_video_en_images(nom_fichier):
     total_frame, paths=video_en_image(video=video, nom_fichier=nom_fichier)
     tab_donne = video_en_donne(total_frame=total_frame, nom_fichier=nom_fichier, video=video)
     return tab_donne, paths
+
+def decoupe_temporelle(tab_donne, paths, debut, fin):
+    return tab_donne[debut:fin+1], paths[debut:fin+1]
