@@ -36,14 +36,8 @@ def resultats_point(request):
             nom_fichier = request.session['nom_fichier']
             paths = request.session['paths']
             tab_donnees = request.session['tab_donnees']
-
-            print(len(tab_donnees))
-            print(debut+fin)
-            tab_donnees, paths = img_traitment.decoupe_temporelle(tab_donnees, paths, int(debut), int(fin))
-
-            print(debut)
-            print(paths)
-            print(tab_donnees)
+            paths=img_traitment.fichier_video_avec_points(nom_fichier,int(debut),int(fin),tab_donnees)
+            tab_donnees = img_traitment.decoupe_temporelle(tab_donnees, int(debut), int(fin))
             
 
             # Faites quelque chose avec les données du formulaire
