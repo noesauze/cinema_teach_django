@@ -64,5 +64,17 @@ def fichier_video_en_images(nom_fichier):
     tab_donne = video_en_donne(total_frame=total_frame, nom_fichier=nom_fichier, video=video)
     return tab_donne, paths
 
-def decoupe_temporelle(tab_donne, paths, debut, fin):
+def decoupe_temporelle(tab_donne, debut, fin,paths=[]):
     return tab_donne[debut:fin+1], paths[debut:fin+1]
+
+def fichier_video_avec_points(nom_fichier,debut,fin,tab_donne):
+    paths=[]
+    for frame in range (debut,fin+1):
+        print(type(tab_donne[frame][0][0]))
+        image=cv2.imread(f'cinema_teach/static/cinema_teach/cache/{nom_fichier + "_"+ str(frame)}.png')
+        image=cv2.circle(image,(int(tab_donne[frame][0][1]),int(tab_donne[frame][0][0])),2,(0,255,0),-1)
+        path="/static/cinema_teach/cache/"+nom_fichier + "_traite_"+ str(frame)+".png"
+        cv2.imwrite(f'cinema_teach/static/cinema_teach/cache/{nom_fichier + "_traite_"+ str(frame)}.png',image)
+        paths.append(path)
+    print(paths)
+    return paths
