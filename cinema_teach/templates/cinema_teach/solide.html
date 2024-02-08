@@ -1,38 +1,9 @@
+{% extends 'cinema_teach/base.html' %}
 {% load static %}
+{% block title %}Cinématique du solide{% endblock %}
+{% block style %}<link rel="stylesheet" href="{% static 'cinema_teach/modules.css' %}">{% endblock %}
 
-<!DOCTYPE html>
-<html>
-
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-    type="text/css">
-  <link rel="stylesheet" href="{% static 'cinema_teach/modules.css' %}">
-</head>
-
-<body>
-  <nav class="navbar navbar-expand-md navbar-dark bg-primary">
-    <div class="container"> <button class="navbar-toggler navbar-toggler-right border-0" type="button"
-        data-toggle="collapse" data-target="#navbar19" style="">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbar19"> <a class="navbar-brand d-none d-md-block" href="#">
-          <i class="fa d-inline fa-lg fa-stop-circle-o"></i>
-          <b> CINEMAT'TEACH</b>
-        </a>
-        <ul class="navbar-nav mx-auto" id="pages">
-          <li class="nav-item" style=""> <a class="nav-link" href="/"><b style="">Accueil</b></a> </li>
-          <li class="nav-item"> <a class="nav-link active" href="/modules">Modules</a> </li>
-          <li class="nav-item"> <a class="nav-link" href="/">Dashboard</a> </li>
-        </ul>
-        <ul class="navbar-nav" id="profile">
-          <li class="nav-item w-100" style="	width: 50px;	height: 30px;"><a class="nav-link" href="login.html"><i
-                class="fa fa-user fa-fw" style=""></i></a></li>
-        </ul>
-      </div>
-    </div>
-  </nav>
+{% block content %}
   <div class="">
     <div class="container">
       <div class="row">
@@ -189,7 +160,7 @@
       </div>
     </div>
   </div>
-  <div class="modal" id="import-img" style="">
+  <div class="modal" id="import-img">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -206,36 +177,6 @@
         <div class="modal-footer"> <button type="submit" class="btn btn-primary">Save changes</button> <button
             type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> </div>
         </form>
-      </div>
-    </div>
-  </div>
-  <div class="py-3">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12 text-center d-md-flex align-items-center"> <i
-            class="d-block fa fa-stop-circle fa-2x mr-md-5 text-primary"></i>
-          <ul class="nav mx-md-auto d-flex justify-content-center">
-            <li class="nav-item"> <a class="nav-link active" href="#">Home</a> </li>
-            <li class="nav-item"> <a class="nav-link" href="#">Features</a> </li>
-            <li class="nav-item"> <a class="nav-link" href="#">Pricing</a> </li>
-            <li class="nav-item"> <a class="nav-link" href="#">About</a> </li>
-          </ul>
-          <div class="row">
-            <div class="col-md-12 d-flex align-items-center justify-content-md-between justify-content-center my-2"> <a
-                href="#">
-                <i class="d-block fa fa-facebook-official text-muted fa-lg mx-2"></i>
-              </a> <a href="#">
-                <i class="d-block fa fa-instagram text-muted fa-lg mx-2"></i>
-              </a> <a href="#">
-                <i class="d-block fa fa-twitter text-muted fa-lg ml-2"></i>
-              </a> </div>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12 text-center">
-          <p class="mt-2 mb-0">© 2014-2018 Pingendo. All rights reserved</p>
-        </div>
       </div>
     </div>
   </div>
@@ -288,6 +229,4 @@
       })
     })
   </script>
-</body>
-
-</html>
+{% endblock %}

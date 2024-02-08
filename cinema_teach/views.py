@@ -25,6 +25,10 @@ def modules(request):
     template = loader.get_template("cinema_teach/modules.html")
     return HttpResponse(template.render({},request))
 
+def about(request):
+    template = loader.get_template("cinema_teach/about.html")
+    return HttpResponse(template.render({},request))
+
 
 def resultats_point(request):
     if request.method == 'POST':
