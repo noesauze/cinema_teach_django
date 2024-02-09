@@ -2,6 +2,9 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import numpy as np
 from io import StringIO
+from io import BytesIO
+import base64
+
 
 def calculate_speeds(trajectory, dis_conversion):
     speeds = []
@@ -65,10 +68,19 @@ def plot_acceleration(ax, pos1, pos2, acceleration, dis_conversion):
                  acceleration * np.sin(np.arctan2(pos2[1] - pos1[1], pos2[0] - pos1[0])) * dis_conversion,
                  head_width=0.1, head_length=0.1, fc='green', ec='green', alpha=0.7, label='Accélération')
 
-def plot_fig():
+def plot_fig(trajectory, dis_conversion):
     fig, ax = plt.subplots()
     plot_trajectory(ax, trajectory, dis_conversion)
-    plt.show()
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    image_data = buffer.getvalue()
+    plt.close()
+
+    image_base64 = base64.b64encode(image_data).decode('utf-8')
+
+
+    return image_base64
 '''
     # Tracé des vecteurs de déplacement, vitesse et accélération
     for i in range(len(trajectory) - 1):
@@ -95,4 +107,3 @@ dis_conversion = 0.1
 
 speeds = calculate_speeds(trajectory, dis_conversion)
 accelerations = calculate_accelerations(trajectory, dis_conversion)
-plot_fig()

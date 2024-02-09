@@ -15,6 +15,11 @@ from django.shortcuts import render, redirect
 from .forms import ImportForm
 from .forms import FormulaireParametresPoint
 from cinema_teach import img_traitment
+from django.http import HttpResponse
+from .meca_point import plot_fig
+
+import tkinter as tk
+from PIL import Image, ImageTk
 
 
 def index(request):
@@ -41,12 +46,13 @@ def resultats_point(request):
             paths = request.session['paths']
             tab_donnees = request.session['tab_donnees']
             paths=img_traitment.fichier_video_avec_points(nom_fichier,int(debut),int(fin),tab_donnees)
-            tab_donnees = img_traitment.decoupe_temporelle(tab_donnees, int(debut), int(fin))
+            tab_donnees = json.loads(str(img_traitment.decoupe_temporelle(tab_donnees, int(debut), int(fin))))
             
 
-            # Faites quelque chose avec les données du formulaire
-            # ...
-            return render(request, 'cinema_teach/point-resultats.html', {'nom_fichier': nom_fichier, 'paths': paths})
+
+            image_data = plot_fig(tab_donnees, int(taille_objet))
+
+            return render(request, 'cinema_teach/point-resultats.html', {'nom_fichier': nom_fichier, 'paths': paths, 'image_data':image_data})
         else:
             print("non valide")
             print(formulaire.errors)  # Afficher les erreurs de validation du formulaire

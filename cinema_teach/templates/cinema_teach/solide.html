@@ -160,26 +160,7 @@
       </div>
     </div>
   </div>
-  <div class="modal" id="import-img">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title"> Importer des images</h5> <button type="button" class="close" data-dismiss="modal">
-            <span>×</span> </button>
-        </div>
-        <div class="modal-body">
-          <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form.as_p }}
-        
-            
-        </div>
-        <div class="modal-footer"> <button type="submit" class="btn btn-primary">Save changes</button> <button
-            type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> </div>
-        </form>
-      </div>
-    </div>
-  </div>
+  {% include 'cinema_teach/importer_fichier.html' %}
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
     integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
     crossorigin="anonymous"></script>

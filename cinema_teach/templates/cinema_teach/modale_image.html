@@ -1,0 +1,21 @@
+<!-- Modale pour afficher l'image en grand -->
+<div class="modal" id="imageModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title">Image traitée</h5>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body" style="text-align: center;">
+          <img id="modalImage" class="img-fluid" src="" alt="Image en grand">
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    function showImage(imagePath) {
+      var modalImage = document.getElementById('modalImage');
+      modalImage.src = imagePath;
+    }
+  </script>
+  

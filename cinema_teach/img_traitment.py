@@ -65,7 +65,7 @@ def fichier_video_en_images(nom_fichier):
     return tab_donne, paths
 
 def decoupe_temporelle(tab_donne, debut, fin,paths=[]):
-    return tab_donne[debut:fin+1], paths[debut:fin+1]
+    return tab_donne[debut:fin+1]
 
 def fichier_video_avec_points(nom_fichier,debut,fin,tab_donne):
     paths=[]
