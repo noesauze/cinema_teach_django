@@ -1,0 +1,70 @@
+<!-- Modale pour afficher l'image en grand -->
+{% load static %}
+
+<script src="{% static 'jquery/jquery-3.7.1.min.js' %}"></script>
+<div class="modal" id="imageModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Réglage de l'échelle</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="text-align: center;" id="modalBody">
+                <p>Mesurer une distance en plaçant 2 points sur l'image. La mesure doit être faite sur un élement du même plan que l'objet dont la cinématique est analysé.</p>
+                <img id="modalImage" class="img-fluid" src="" alt="Image en grand">
+                <p></p>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function showImage(imagePath) {
+        var modalImage = document.getElementById('modalImage');
+        modalImage.src = imagePath;
+    }
+
+
+    $(document).ready(function () {
+
+        $('#modalImage').click(function (event) {
+            // Récupérer les coordonnées du clic
+            var x = event.pageX - $(this).offset().left+12;
+            var y = event.pageY - $(this).offset().top+12;
+            var offset =  $(this).offset().left;
+            console.log(offset);
+
+            // Envoyer les coordonnées au serveur
+            $.ajax({
+                type: 'POST',
+                url: window.location.href+"/post-point",
+                data: {
+                    'x': x,
+                    'y': y,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function (response) {
+                    // Ajouter un point bleu à l'emplacement cliqué
+                    posx = event.pageX - offset
+                    $('<div class=\"point\">').css({
+                        'position': 'absolute',
+                        'left': x + 'px',
+                        'top': y + 'px',
+                        'width': '10px',
+                        'height': '10px',
+                        'background-color': 'blue',
+                        'border-radius': '50%'
+                    }).appendTo('#modalBody').fadeIn();
+                    $(".distance").remove();
+                    $("<p class='distance'>Distance : "+response.distance+" pixels</p><button class=\"distance\" id=\"supprimer\">Supprimer des éléments</button>"
+).appendTo('#modalBody').fadeIn();
+                    $('#pixels').val(response.distance);
+                    console.log("succes")
+                }
+            });
+        });
+        $("#supprimer").click(function() {
+        // Sélectionner tous les éléments avec la classe 'point' et les supprimer
+            $(".point").remove();
+    });
+    });
+</script>

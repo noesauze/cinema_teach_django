@@ -39,10 +39,11 @@
                         data-toggle="modal" data-target="#import-img">Importer&nbsp;<i class="fa fa-fw fa-video-camera"></i>
                       </a></div>
                   </div>
+                  {% include 'cinema_teach/regler_echelle.html' %}
                   {% if paths %}
                   <div class="row flex-nowrap overflow-auto pb-0 mb-1" id="pictures">
                     {% for path in paths %}
-                    <div class="col-md-3 py-2"><img class="d-block img-fluid" src="{{ path }}">{{ forloop.counter0 }}
+                    <div class="col-md-3 py-2"><img class="d-block img-fluid" src="{{ path }}" data-toggle="modal" data-target="#imageModal" onclick="showImage('{{ path }}')" alt="Image {{ forloop.counter0 }}">{{ forloop.counter0 }}
                     </div>
                     {% endfor %}
                   </div>
@@ -90,11 +91,25 @@
                         <div class="form-group row">
                           <label for="{{ formulaire.taille_objet.id_for_label }}" class="col-form-label col-3">Taille de
                             l'objet en cm</label>
-                          <div class="col-9">
+                          <div class="col-2">
                             {{ formulaire.taille_objet }}
                           </div>
+                          <div class="col-2 text-align">
+                            <p>cm <-></p>
+                          </div>
+                          <div class="col-3">
+                            {{ formulaire.taille_pixels }}
+                          </div>
+                          <div class="col-1">
+                            <p>px</p>
+                          </div>
+                          <div class="col-1">
+                            <button id="bouton-modal" class="btn btn-info" data-toggle="modal" data-target="#simpleModal" onclick="showParagraphe('Pour mesurer une distance, cliquer sur une image de la vidéo')">?</button>
+                          </div>
                         </div>
-                        <button type="submit" class="btn btn-primary">Traiter</button>
+                        <div class="form-group row">
+                           <button type="submit" class="btn btn-primary btn-lg btn-block">Traiter</button>
+                           </div>
                       </form>
 
                     </div>
@@ -108,11 +123,17 @@
     </div>
   </div>
 
+  {% include 'cinema_teach/modale_simple.html' %}
+
   {% include 'cinema_teach/importer_fichier.html' %}
 
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-    crossorigin="anonymous"></script>
+  <script src="{% static 'jquery/jquery-3.7.1.min.js' %}"></script>
+  <script>
+    document.getElementById("bouton-modal").addEventListener("click", function(event) {
+        // Empêcher le comportement par défaut du bouton (envoi du formulaire)
+        event.preventDefault();
+    });
+</script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
     integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
     crossorigin="anonymous"></script>
@@ -126,6 +147,7 @@
     src="https://cdn.jsdelivr.net/npm/tableexport.jquery.plugin@1.10.21/libs/jsPDF-AutoTable/jspdf.plugin.autotable.js"></script>
   <script src="https://unpkg.com/bootstrap-table@1.22.1/dist/bootstrap-table.min.js"></script>
   <script src="https://unpkg.com/bootstrap-table@1.22.1/dist/extensions/export/bootstrap-table-export.min.js"></script>
+  
   <script>
     var $table = $('#table')
     $(function () {

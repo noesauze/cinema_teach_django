@@ -43,8 +43,8 @@ def calculate_accelerations(trajectory, dis_conversion):
     return accelerations
 
 def plot_trajectory(ax, trajectory, dis_conversion):
-    x = [point[0][0] * dis_conversion for point in trajectory if point[0] != (0, 0)]
-    y = [point[0][1] * dis_conversion for point in trajectory if point[0] != (0, 0)]
+    x = [point[0][0] * dis_conversion for point in trajectory if int(point[0][0]) != 0 and int(point[0][1]) != 0]
+    y = [point[0][1] * dis_conversion for point in trajectory if int(point[0][0]) != 0 and int(point[0][1]) != 0]
     ax.plot(y,x, label='Trajectoire')
 
 
@@ -71,6 +71,20 @@ def plot_acceleration(ax, pos1, pos2, acceleration, dis_conversion):
 def plot_fig(trajectory, dis_conversion):
     fig, ax = plt.subplots()
     plot_trajectory(ax, trajectory, dis_conversion)
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    image_data = buffer.getvalue()
+    plt.close()
+
+    image_base64 = base64.b64encode(image_data).decode('utf-8')
+
+
+    return image_base64
+
+def plot_fig_accel(trajectory, dis_conversion):
+    fig, ax = plt.subplots()
+    plot_acceleration(ax, trajectory, dis_conversion)
     buffer = BytesIO()
     plt.savefig(buffer, format='png')
     buffer.seek(0)

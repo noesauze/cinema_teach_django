@@ -3,6 +3,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 from io import StringIO
 import csv
+import os
+
+
 #Calcul du masque d'un objet par soustraction 
 def calcul_masque (image, gray_fond, seuil):
     gray_frame=cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
@@ -78,3 +81,10 @@ def fichier_video_avec_points(nom_fichier,debut,fin,tab_donne):
         paths.append(path)
     print(paths)
     return paths
+
+def supprimer_fichier(path):
+    if os.path.exists(path):
+        os.remove(path)
+        print("Le fichier a été supprimé avec succès.")
+    else:
+        print("Le fichier n'existe pas.")
