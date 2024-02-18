@@ -1,3 +1,4 @@
+import datetime
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
@@ -11,27 +12,37 @@ def calcul_masque (image, gray_fond, seuil):
     gray_frame=cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
     (longueur, largeur) = np.shape(gray_fond)
     masque = np.zeros((longueur, largeur))
-    for x in range (longueur):
-        for y in range (largeur):
-            if (abs(int(gray_frame[x][y])-int(gray_fond[x][y])))>seuil:
-                masque[x][y]=255
+    #SOLUTION 1
+    #for x in range (longueur):
+    #    for y in range (largeur):
+    #        if (abs(int(gray_frame[x][y])-int(gray_fond[x][y])))>seuil:
+    #            masque[x][y]=255
+    #-------------
+    #SOLUION 2 
+    masque_bool = abs(gray_fond - gray_frame)>seuil
+    masque = masque_bool*np.ones((longueur, largeur), np.uint8)*255
+    #------------
     kernel=np.ones((5, 5), np.uint8)
     masque=cv2.erode(masque, kernel, iterations=3)
     return masque
 
 #Calcul du centre de l'objet grâce à son masque
 def calcul_centre (masque):
-    moy_x=0
-    moy_y=0
-    nb=0
     (longueur, largeur) = np.shape(masque)
-    for x in range (longueur):
-        for y in range(largeur):
-            if masque[x][y]!=0:
-                nb+=1
-                moy_x=((moy_x*(nb-1))+x)/nb
-                moy_y=((moy_y*(nb-1))+y)/nb
-    return (np.floor(moy_x),np.floor(moy_y))
+    ax0 = np.linspace(0,largeur,largeur)
+    ax1 = np.linspace(0,longueur,longueur)
+
+    sum_ax0 = np.sum(masque,axis=0)
+    sum_ax1 = np.sum(masque,axis=1)
+    sum_tot = np.sum(sum_ax0)
+    #print("sum_tot = ", sum_tot)
+    if sum_tot == 0:
+        centre_x = 0
+        centre_y = 0
+    else :
+        centre_x = int(np.floor(np.sum(ax1*sum_ax1)/sum_tot))
+        centre_y = int(np.floor(np.sum(ax0*sum_ax0)/sum_tot))
+    return (centre_x,centre_y)
 
 #Converti une vidéo en tableau d'image au format png
 def video_en_image(video, nom_fichier):

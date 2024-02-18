@@ -61,24 +61,7 @@
                   </div>
                 </div>
               </div>
-              <div class="row border-bottom border-primary">
-                <div class="col-md-12">
-                  <h4 class="pt-3">Tableaux</h4>
-                  <div class="row">
-                    <div class="col-md-12 d-flex justify-content-center">
-                      <table id="table" data-pagination="true" data-show-columns="true" data-show-export="true">
-                        <thead>
-                          <tr>
-                            <th data-field="id" data-width="100">ID</th>
-                            <th data-field="name" data-width="300">Item Name</th>
-                            <th data-field="price" data-width="200">Item Price</th>
-                          </tr>
-                        </thead>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              {% include 'cinema_teach/tableau.html' %}
             </div>
           </div>
         </div>
