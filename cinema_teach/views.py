@@ -13,9 +13,10 @@ from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 
 from django.shortcuts import render, redirect
-from .forms import ImportForm
+from .forms import ImportForm, ImportFormSolide
 from .forms import FormulaireParametresPoint
 from .forms import FormulaireParametresSolide
+from .forms import FormulaireEtalonnageSolide
 from cinema_teach import img_traitment
 from cinema_teach import img_traitement_solide
 from django.http import HttpResponse
@@ -125,7 +126,7 @@ def post_point(request):
 
         return reponse
 
-"""""
+
 def solide(request):
     if request.method == 'POST':
         form = ImportForm(request.POST, request.FILES)
@@ -137,15 +138,23 @@ def solide(request):
                 destination.write(chunk)
             destination.close()
             print(nom_fichier)
-            tab_images, paths = img_traitment.fichier_video_en_images(nom_fichier)
+
+            tab_donnees, paths = img_traitment.fichier_video_en_images(nom_fichier)
+            request.session['tab_donnees'] = tab_donnees
+            request.session['paths'] = paths
+            request.session['nom_fichier'] = nom_fichier
+            
+            
+            formulaire = FormulaireParametresSolide()
+
             print(paths)
             # Vous pouvez effectuer d'autres opérations ici si nécessaire
-            return render(request, 'cinema_teach/solide.html', {'nom_fichier': nom_fichier, 'paths': paths})
+            return render(request, 'cinema_teach/solide.html', {'nom_fichier': nom_fichier, 'paths': paths,'formulaire': formulaire})
     else:
         form = ImportForm()
 
-    return render(request, 'cinema_teach/solide.html', {'form': form})
-"""
+    return render(request, 'cinema_teach/solide.html', {'form': form,'formulaire': FormulaireParametresSolide})
+
 def vider(request):
 
     for path in request.session['paths']:
@@ -163,39 +172,40 @@ def vider(request):
     return response
 
 
-def solide(request):
+def etalonnage_solide(request):
     if request.method == 'POST':
-        form = ImportForm(request.POST, request.FILES)
-        formulaire = FormulaireParametresSolide(request.POST)
-        if form.is_valid() and (request.FILES['fichier'] != None) and formulaire.is_valid():
-            fichier_upload = request.FILES['fichier']
-            nom_fichier = str(time.time()).replace(".","-")+"."+fichier_upload.name.split(".")[1]
-            destination = open('media/{}'.format(nom_fichier), 'wb+')
+        formulaire = FormulaireEtalonnageSolide(request.POST)
+        if formulaire.is_valid():
+            debut = formulaire.cleaned_data['debut']
+            fin = formulaire.cleaned_data['fin']
+            nb_paquets_impose = formulaire.cleaned_data['nb_paquets_impose']
+            distance_paquets = formulaire.cleaned_data['distance_paquets']
+            taille_objet = formulaire.cleaned_data['taille_objet']
+            nom_fichier = request.session['nom_fichier']
+            tab_donnees = request.session['tab_donnees']
             
- 
-            for chunk in fichier_upload.chunks():
-                destination.write(chunk)
-            destination.close()
-            print(nom_fichier)
-            nb_paquets_impose = formulaire.cleaned_data['nombre de paquets']
-            distance = formulaire.cleaned_data['distance paquets']
-            tab_donnees, paths = img_traitement_solide.fichier_video_en_images(nom_fichier,distance,nb_paquets_impose)
-           
-            request.session['tab_donnees'] = tab_donnees
-            request.session['paths'] = paths
-            request.session['nom_fichier'] = nom_fichier
-            formulaire = FormulaireParametresSolide(request.POST)
+            
+            paths_traites=img_traitement_solide.fichier_video_avec_points(nom_fichier,int(debut),int(fin),tab_donnees)
+            tab_donnees = json.loads(str(img_traitment.decoupe_temporelle(tab_donnees, int(debut), int(fin))))
+            
 
-            return render(request, 'cinema_teach/solide.html', {'nom_fichier': nom_fichier, 'paths': paths, 'formulaire': formulaire})
+            request.session['path_traites'] = paths_traites
+            
+
+
+            image_data = plot_fig(tab_donnees, int(taille_objet))
+
+
+            return render(request, 'cinema_teach/solide-etalonnage.html', {'nom_fichier': nom_fichier, 'paths': paths_traites, 'image_data':image_data, 'formulaire':formulaire})
+        else:
+            print("non valide")
+            print(formulaire.errors)  # Afficher les erreurs de validation du formulaire
+
+            # Le formulaire n'est pas valide, vous pouvez gérer les erreurs ici
+            pass
         
-        
-    else:
-        form = ImportForm()
-        
 
-    return render(request, 'cinema_teach/solide.html', {'form': form, 'formulaire':FormulaireParametresSolide()})
-
-
+    return render(request, 'cinema_teach/solide-etalonnage.html', {})
 
 def resultats_solide(request):
     if request.method == 'POST':
@@ -203,8 +213,8 @@ def resultats_solide(request):
         if formulaire.is_valid():
             debut = formulaire.cleaned_data['debut']
             fin = formulaire.cleaned_data['fin']
-            nb_paquets_impose = formulaire.cleaned_data['nombre de paquets']
-            distance = formulaire.cleaned_data['distance paquets']
+            nb_paquets_impose = formulaire.cleaned_data['nb_paquets_impose']
+            distance_paquets = formulaire.cleaned_data['distance_paquets']
             taille_objet = formulaire.cleaned_data['taille_objet']
             nom_fichier = request.session['nom_fichier']
             tab_donnees = request.session['tab_donnees']

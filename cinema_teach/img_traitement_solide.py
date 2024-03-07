@@ -49,12 +49,12 @@ def trouver_sommets_connexes(matrice_adjacence):
 
 
 #3.1 calcul matrice d'adjacence  
-def mat_adj_paquets(nb_labels,centroids, distance):
+def mat_adj_paquets(nb_labels,centroids, distance_paquets):
     
     proximite=np.zeros((nb_labels-1,nb_labels-1))
     for i in range(1, nb_labels-1):
         for j in range(1,nb_labels-1):
-            if np.sqrt((centroids[i][0] - centroids[j][0])**2 + (centroids[i][1] - centroids[j][1])**2)<distance:
+            if np.sqrt((centroids[i][0] - centroids[j][0])**2 + (centroids[i][1] - centroids[j][1])**2)<distance_paquets:
                 proximite[i-1,j-1]=1
     sommets_connexes=trouver_sommets_connexes(proximite)
     sommets_connexes = [[x + 1 for x in sous_liste] for sous_liste in sommets_connexes]
@@ -82,8 +82,8 @@ def selec_paquets(sommets_connexes,stats,nb_paquets_impose):
         nb_points=0
         for j in range(0,len(sommets_connexes[i])):
             nb_points= nb_points+stats[sommets_connexes[i][j]][4]
-    #On obtient une liste de liste où le premier terme est la valeur d'un des sommets des paquets assemblés et le second terme est la somme des points des paquets assemblés
-    nb_points_ensembles.append([sommets_connexes[i][0],nb_points])
+        #On obtient une liste de liste où le premier terme est la valeur d'un des sommets des paquets assemblés et le second terme est la somme des points des paquets assemblés
+        nb_points_ensembles.append([sommets_connexes[i][0],nb_points])
 
     #Choisir les paquets à enlever : dont le nombre de points est faible
     while len(nb_points_ensembles)>nb_paquets_impose:
@@ -166,7 +166,7 @@ def plt_fig(image,labels,nb_labels,list_centroids):
 
 
 
-def video_en_donne_solide(total_frame, nom_fichier, video,distance,nb_paquets_impose):
+def video_en_donne_solide(total_frame, nom_fichier, video,distance_paquets,nb_paquets_impose):
     tab_donne=[]
     fond=cv.imread("cinema_teach/static/cinema_teach/cache/"+nom_fichier + "_0.png")
     gray_fond = cv.cvtColor(fond, cv.COLOR_BGR2GRAY)
@@ -174,17 +174,17 @@ def video_en_donne_solide(total_frame, nom_fichier, video,distance,nb_paquets_im
         nom = "cinema_teach/static/cinema_teach/cache/"+ nom_fichier + "_"+ str(i)+".png"
         image=cv.imread(f"{nom}")
         nb_labels,labels,stats,centroids=calcul_masque_solide(image=image,gray_fond=gray_fond,seuil=10)
-        sommets_connexes=mat_adj_paquets(nb_labels,centroids, distance)
+        sommets_connexes=mat_adj_paquets(nb_labels,centroids, distance_paquets)
         labels=agglomerer_paquets(labels=labels,sommets_connexes=sommets_connexes)
         nb_points_ensembles_final=selec_paquets(sommets_connexes=sommets_connexes,stats=stats,nb_paquets_impose=nb_paquets_impose)
         labels=reduc_nb_paquets(labels, nb_points_ensembles_final)
         tab_donne.append((calc_centre_paquets(centroids=centroids,sommets_connexes=sommets_connexes,nb_points_ensembles_final=nb_points_ensembles_final,stats=stats,nb_paquets_impose=nb_paquets_impose),i/(video.get(cv.CAP_PROP_FPS))))
     return tab_donne
     
-def fichier_video_en_images(nom_fichier,distance, nb_paquets_impose):
+def fichier_video_en_images(nom_fichier,distance_paquets, nb_paquets_impose):
     video=cv.VideoCapture("media/"+nom_fichier)
     total_frame, paths=video_en_image(video=video, nom_fichier=nom_fichier)
-    tab_donne = video_en_donne_solide(total_frame=total_frame, nom_fichier=nom_fichier, video=video, distance=distance, nb_paquets_impose=nb_paquets_impose)
+    tab_donne = video_en_donne_solide(total_frame=total_frame, nom_fichier=nom_fichier, video=video, distance_paquets=distance_paquets, nb_paquets_impose=nb_paquets_impose)
     return tab_donne, paths
 
 def fichier_video_avec_points(nom_fichier,debut,fin,tab_donne):
