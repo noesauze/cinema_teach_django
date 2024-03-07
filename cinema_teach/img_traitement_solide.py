@@ -1,9 +1,12 @@
+
 import cv2 as cv
 import matplotlib.pyplot as plt
 import numpy as np
 from io import StringIO
 import csv
 import os
+from .img_traitment import video_en_image
+
 
 #Au propre : 1- Masque 2-Déterminer les différents blocs du masque et les différencier 3- Assembler les blocs proches 4- Supprimer les petits pour qu'il n'en reste que 2 5-les afficher sur l'image
 #Il faudra que l'utilisateur rentre le nombre de points sur l'objet (nb_paquets_impose) et il pourra modifier la "distance" dans le cas où le regroupement de paquets proches est à retoucher
@@ -12,10 +15,16 @@ def calcul_masque_solide (image, gray_fond, seuil):
     gray_frame=cv.cvtColor(image,cv.COLOR_BGR2GRAY)
     (longueur, largeur) = np.shape(gray_fond)
     masque = np.zeros((longueur, largeur))
-    for x in range (longueur):
-        for y in range (largeur):
-            if (abs(int(gray_frame[x][y])-int(gray_fond[x][y])))>seuil:
-                masque[x][y]=255
+    #SOLUTION 1
+    #for x in range (longueur):
+    #    for y in range (largeur):
+    #        if (abs(int(gray_frame[x][y])-int(gray_fond[x][y])))>seuil:
+    #            masque[x][y]=255
+    #-------------
+    #SOLUION 2 
+    masque_bool = abs(gray_fond - gray_frame)>seuil
+    masque = masque_bool*np.ones((longueur, largeur), np.uint8)*255
+    #------------
     kernel=np.ones((5, 5), np.uint8)
     masque=cv.erode(masque, kernel, iterations=3)
     nb_labels, labels, stats, centroids = cv.connectedComponentsWithStats(masque)
@@ -154,6 +163,30 @@ def plt_fig(image,labels,nb_labels,list_centroids):
     
     # Tracer le point sur le graphique
         plt.scatter(x, y, color='red', marker='o', s=10) 
+
+
+
+
+def video_en_donne(total_frame, nom_fichier, video,distance,nb_paquets_impose):
+    tab_donne=[]
+    fond=cv.imread("cinema_teach/static/cinema_teach/cache/"+nom_fichier + "_0.png")
+    gray_fond = cv.cvtColor(fond, cv.COLOR_BGR2GRAY)
+    for i in range (total_frame):
+        nom = "cinema_teach/static/cinema_teach/cache/"+ nom_fichier + "_"+ str(i)+".png"
+        image=cv.imread(f"{nom}")
+        nb_labels,labels,stats,centroids=calcul_masque_solide(image=image,gray_fond=gray_fond,seuil=10)
+        sommets_connexes=mat_adj_paquets(nb_labels,centroids, distance)
+        labels=agglomerer_paquets(labels=labels,sommets_connexes=sommets_connexes)
+        nb_points_ensembles_final=selec_paquets(sommets_connexes=sommets_connexes,stats=stats,nb_paquets_impose=nb_paquets_impose)
+        labels=reduc_nb_paquets(labels, nb_points_ensembles_final)
+        tab_donne.append((calc_centre_paquets(centroids=centroids,sommets_connexes=sommets_connexes,nb_points_ensembles_final=nb_points_ensembles_final,stats=stats,nb_paquets_impose=nb_paquets_impose),i/(video.get(cv.CAP_PROP_FPS))))
+    return tab_donne
+    
+def fichier_video_en_images(nom_fichier):
+    video=cv.VideoCapture("media/"+nom_fichier)
+    total_frame, paths=video_en_image(video=video, nom_fichier=nom_fichier)
+    tab_donne = video_en_donne(total_frame=total_frame, nom_fichier=nom_fichier, video=video)
+    return tab_donne, paths
 
 
 
