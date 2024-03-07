@@ -1,4 +1,3 @@
-
 import cv2 as cv
 import matplotlib.pyplot as plt
 import numpy as np
@@ -167,7 +166,7 @@ def plt_fig(image,labels,nb_labels,list_centroids):
 
 
 
-def video_en_donne(total_frame, nom_fichier, video,distance,nb_paquets_impose):
+def video_en_donne_solide(total_frame, nom_fichier, video,distance,nb_paquets_impose):
     tab_donne=[]
     fond=cv.imread("cinema_teach/static/cinema_teach/cache/"+nom_fichier + "_0.png")
     gray_fond = cv.cvtColor(fond, cv.COLOR_BGR2GRAY)
@@ -182,11 +181,23 @@ def video_en_donne(total_frame, nom_fichier, video,distance,nb_paquets_impose):
         tab_donne.append((calc_centre_paquets(centroids=centroids,sommets_connexes=sommets_connexes,nb_points_ensembles_final=nb_points_ensembles_final,stats=stats,nb_paquets_impose=nb_paquets_impose),i/(video.get(cv.CAP_PROP_FPS))))
     return tab_donne
     
-def fichier_video_en_images(nom_fichier):
+def fichier_video_en_images(nom_fichier,distance, nb_paquets_impose):
     video=cv.VideoCapture("media/"+nom_fichier)
     total_frame, paths=video_en_image(video=video, nom_fichier=nom_fichier)
-    tab_donne = video_en_donne(total_frame=total_frame, nom_fichier=nom_fichier, video=video)
+    tab_donne = video_en_donne_solide(total_frame=total_frame, nom_fichier=nom_fichier, video=video, distance=distance, nb_paquets_impose=nb_paquets_impose)
     return tab_donne, paths
+
+def fichier_video_avec_points(nom_fichier,debut,fin,tab_donne):
+    paths=[]
+    for frame in range (debut,fin+1):
+        print(type(tab_donne[frame][0][0]))
+        image=cv.imread(f'cinema_teach/static/cinema_teach/cache/{nom_fichier + "_"+ str(frame)}.png')
+        image=cv.circle(image,(int(tab_donne[frame][0][1]),int(tab_donne[frame][0][0])),2,(0,255,0),-1)
+        path="/static/cinema_teach/cache/"+nom_fichier + "_traite_"+ str(frame)+".png"
+        cv.imwrite(f'cinema_teach/static/cinema_teach/cache/{nom_fichier + "_traite_"+ str(frame)}.png',image)
+        paths.append(path)
+    print(paths)
+    return paths
 
 
 

@@ -15,7 +15,9 @@ from django.core.files.storage import default_storage
 from django.shortcuts import render, redirect
 from .forms import ImportForm
 from .forms import FormulaireParametresPoint
+from .forms import FormulaireParametresSolide
 from cinema_teach import img_traitment
+from cinema_teach import img_traitement_solide
 from django.http import HttpResponse
 from .meca_point import plot_fig
 
@@ -123,6 +125,7 @@ def post_point(request):
 
         return reponse
 
+"""""
 def solide(request):
     if request.method == 'POST':
         form = ImportForm(request.POST, request.FILES)
@@ -142,7 +145,7 @@ def solide(request):
         form = ImportForm()
 
     return render(request, 'cinema_teach/solide.html', {'form': form})
-
+"""
 def vider(request):
 
     for path in request.session['paths']:
@@ -158,3 +161,95 @@ def vider(request):
     response['Expires'] = '0'
 
     return response
+
+
+def solide(request):
+    if request.method == 'POST':
+        form = ImportForm(request.POST, request.FILES)
+        formulaire = FormulaireParametresSolide(request.POST)
+        if form.is_valid() and (request.FILES['fichier'] != None) and formulaire.is_valid():
+            fichier_upload = request.FILES['fichier']
+            nom_fichier = str(time.time()).replace(".","-")+"."+fichier_upload.name.split(".")[1]
+            destination = open('media/{}'.format(nom_fichier), 'wb+')
+            
+ 
+            for chunk in fichier_upload.chunks():
+                destination.write(chunk)
+            destination.close()
+            print(nom_fichier)
+            nb_paquets_impose = formulaire.cleaned_data['nombre de paquets']
+            distance = formulaire.cleaned_data['distance paquets']
+            tab_donnees, paths = img_traitement_solide.fichier_video_en_images(nom_fichier,distance,nb_paquets_impose)
+           
+            request.session['tab_donnees'] = tab_donnees
+            request.session['paths'] = paths
+            request.session['nom_fichier'] = nom_fichier
+            formulaire = FormulaireParametresSolide(request.POST)
+
+            return render(request, 'cinema_teach/solide.html', {'nom_fichier': nom_fichier, 'paths': paths, 'formulaire': formulaire})
+        
+        
+    else:
+        form = ImportForm()
+        
+
+    return render(request, 'cinema_teach/solide.html', {'form': form, 'formulaire':FormulaireParametresSolide()})
+
+
+
+def resultats_solide(request):
+    if request.method == 'POST':
+        formulaire = FormulaireParametresSolide(request.POST)
+        if formulaire.is_valid():
+            debut = formulaire.cleaned_data['debut']
+            fin = formulaire.cleaned_data['fin']
+            nb_paquets_impose = formulaire.cleaned_data['nombre de paquets']
+            distance = formulaire.cleaned_data['distance paquets']
+            taille_objet = formulaire.cleaned_data['taille_objet']
+            nom_fichier = request.session['nom_fichier']
+            tab_donnees = request.session['tab_donnees']
+            paths_traites=img_traitement_solide.fichier_video_avec_points(nom_fichier,int(debut),int(fin),tab_donnees)
+            tab_donnees = json.loads(str(img_traitment.decoupe_temporelle(tab_donnees, int(debut), int(fin))))
+
+            request.session['path_traites'] = paths_traites
+            
+
+
+            image_data = plot_fig(tab_donnees, int(taille_objet))
+
+
+            return render(request, 'cinema_teach/solide-resultats.html', {'nom_fichier': nom_fichier, 'paths': paths_traites, 'image_data':image_data})
+        else:
+            print("non valide")
+            print(formulaire.errors)  # Afficher les erreurs de validation du formulaire
+
+            # Le formulaire n'est pas valide, vous pouvez gérer les erreurs ici
+            pass
+        
+
+    return render(request, 'cinema_teach/solide-resultats.html', {})
+
+
+def post_solide(request):
+    print("dans la vue")
+    if request.method == 'POST':
+        print("dans le if")
+        x = request.POST.get('x')
+        y = request.POST.get('y')
+        print(x, y)
+        if len(request.session['pointsEchelle']) != 0:
+            request.session['pointsEchelle'].append([float(x), float(y)])
+            print(request.session['pointsEchelle'][0], request.session['pointsEchelle'][1])
+            request.session['distancePixels'] = math.dist([float(request.session['pointsEchelle'][0][0]), float(request.session['pointsEchelle'][0][1])], request.session['pointsEchelle'][1])
+            print(request.session['distancePixels'])
+            request.session['pointsEchelle']=request.session['pointsEchelle'][1:]
+        else:
+            request.session['pointsEchelle'].append([float(x), float(y)])
+            request.session['distancePixels']=0
+            
+        # Renvoyer les coordonnées du point enregistré
+        reponse = JsonResponse({'x': x, 'y': y, 'distance':round(request.session["distancePixels"], 1)})
+
+        return reponse
+
+
