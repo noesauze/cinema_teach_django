@@ -193,20 +193,17 @@ def video_en_donne_solide(total_frame, nom_fichier, video,distance_paquets,nb_pa
         #tab_donne.append((calc_centre_paquets(centroids=centroids,sommets_connexes=sommets_connexes,nb_points_ensembles_final=nb_points_ensembles_final,stats=stats,nb_paquets_impose=nb_paquets_impose),i/(video.get(cv.CAP_PROP_FPS))))
     return tab_donne
     
-def fichier_video_en_images(nom_fichier,distance_paquets, nb_paquets_impose):
-    video=cv.VideoCapture("media/"+nom_fichier)
-    total_frame, paths=video_en_image(video=video, nom_fichier=nom_fichier)
-    tab_donne = video_en_donne_solide(total_frame=total_frame, nom_fichier=nom_fichier, video=video, distance_paquets=distance_paquets, nb_paquets_impose=nb_paquets_impose)
-    return tab_donne, paths
 
-def fichier_video_avec_points(nom_fichier,debut,fin,tab_donne,nb_paquets_impose,distance_paquets,):
+
+def fichier_video_avec_points(nom_fichier,debut,fin,nb_paquets_impose,distance_paquets,seuil):
     paths=[]
+    tab_donne=[]
     fond=cv.imread("cinema_teach/static/cinema_teach/cache/"+nom_fichier + "_0.png")
     gray_fond = cv.cvtColor(fond, cv.COLOR_BGR2GRAY)
     for frame in range (debut,fin+1):
         nom = "cinema_teach/static/cinema_teach/cache/"+ nom_fichier + "_"+ str(frame)+".png"
         image=cv.imread(f"{nom}")
-        nb_labels,labels,stats,centroids=calcul_masque_solide(image=image,gray_fond=gray_fond,seuil=65)
+        nb_labels,labels,stats,centroids=calcul_masque_solide(image=image,gray_fond=gray_fond,seuil=seuil)
         sommets_connexes=mat_adj_paquets(nb_labels,centroids, distance_paquets)
         labels=agglomerer_paquets(labels=labels,sommets_connexes=sommets_connexes)
         nb_points_ensembles_final=selec_paquets(sommets_connexes=sommets_connexes,stats=stats,nb_paquets_impose=nb_paquets_impose)
@@ -215,7 +212,7 @@ def fichier_video_avec_points(nom_fichier,debut,fin,tab_donne,nb_paquets_impose,
         ##
         #print(type(tab_donne[frame][0][0]))
         
-        
+        #tab_donne.append((calc_centre_paquets(centroids,sommets_connexes,nb_points_ensembles_final,stats,nb_paquets_impose)))
         #image=cv.circle(image,(int(tab_donne[frame][0][1]),int(tab_donne[frame][0][0])),2,(0,255,0),-1)
         path="/static/cinema_teach/cache/"+nom_fichier + "_traite_"+ str(frame)+".png"
         cv.imwrite(f'cinema_teach/static/cinema_teach/cache/{nom_fichier + "_traite_"+ str(frame)}.png',image)
