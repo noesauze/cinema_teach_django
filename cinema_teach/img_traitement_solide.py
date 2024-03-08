@@ -13,19 +13,23 @@ from .img_traitment import video_en_image
 def calcul_masque_solide (image, gray_fond, seuil):
     gray_frame=cv.cvtColor(image,cv.COLOR_BGR2GRAY)
     (longueur, largeur) = np.shape(gray_fond)
-    masque = np.zeros((longueur, largeur))
+    masque = np.zeros((longueur, largeur),np.uint8)
     #SOLUTION 1
-    #for x in range (longueur):
-    #    for y in range (largeur):
-    #        if (abs(int(gray_frame[x][y])-int(gray_fond[x][y])))>seuil:
-    #            masque[x][y]=255
-    #-------------
+    for x in range (longueur):
+        for y in range (largeur):
+            if (abs(int(gray_frame[x][y])-int(gray_fond[x][y])))>seuil:
+                masque[x][y]=255
+    #-------------'''
     #SOLUION 2 
+    ''''
     masque_bool = abs(gray_fond - gray_frame)>seuil
+    print("masque_bool")
+    print(masque_bool)
     masque = masque_bool*np.ones((longueur, largeur), np.uint8)*255
-    #------------
+    #------------'''
     kernel=np.ones((5, 5), np.uint8)
     masque=cv.erode(masque, kernel, iterations=3)
+    
     nb_labels, labels, stats, centroids = cv.connectedComponentsWithStats(masque)
     return nb_labels,labels,stats,centroids
 
@@ -95,7 +99,7 @@ def selec_paquets(sommets_connexes,stats,nb_paquets_impose):
                 list_transit.append(nb_points_ensembles[i])
         nb_points_ensembles=list_transit
     nb_points_ensembles_final=nb_points_ensembles
-
+    print(nb_points_ensembles_final)
     return nb_points_ensembles_final
 
 
@@ -115,18 +119,21 @@ def calc_centre_paquets(centroids,sommets_connexes,nb_points_ensembles_final,sta
 
     #Calcul effectif des centroides avec leur poids une fois les paquets proches rassemblés
     list_centroids=[]
-
-    for i in range(0,nb_paquets_impose):
-        val_ieme_premier=nb_points_ensembles_final[i][0]-1
-        for k in range(len(sommets_connexes)):
-            if sommets_connexes[k][0]==val_ieme_premier+1:
-                index=k #indice de l'emplacement dans sommets_connexes de la valeur label qui regroupe les blocs 
-        list_centroids.append([[centroids[val_ieme_premier+1][0],centroids[val_ieme_premier+1][1]],stats[val_ieme_premier+1][4]])
+    if (len(nb_paquets_impose)<=len(nb_points_ensembles_final)):
+        for i in range(0,nb_paquets_impose):
+        
+            val_ieme_premier=nb_points_ensembles_final[i][0]-1
+            print(nb_points_ensembles_final[i][0])
+            for k in range(len(sommets_connexes)):
+                if sommets_connexes[k][0]==val_ieme_premier+1:
+                    index=k #indice de l'emplacement dans sommets_connexes de la valeur label qui regroupe les blocs 
+            list_centroids.append([[centroids[val_ieme_premier+1][0],centroids[val_ieme_premier+1][1]],stats[val_ieme_premier+1][4]])
     
-        for j in range(1,len(sommets_connexes[index])):
-            list_centroids[i][0][0]=(list_centroids[i][0][0]*list_centroids[i][1] + centroids[sommets_connexes[index][j]][0]*stats[sommets_connexes[index][j]][4])/(list_centroids[i][1]+stats[sommets_connexes[index][j]][4])
-            list_centroids[i][0][1]=(list_centroids[i][0][1]*list_centroids[i][1] + centroids[sommets_connexes[index][j]][1]*stats[sommets_connexes[index][j]][4])/(list_centroids[i][1]+stats[sommets_connexes[index][j]][4])
-            list_centroids[i][1]=list_centroids[i][1]+stats[sommets_connexes[index][j]][4]
+            for j in range(1,len(sommets_connexes[index])):
+                list_centroids[i][0][0]=(list_centroids[i][0][0]*list_centroids[i][1] + centroids[sommets_connexes[index][j]][0]*stats[sommets_connexes[index][j]][4])/(list_centroids[i][1]+stats[sommets_connexes[index][j]][4])
+                list_centroids[i][0][1]=(list_centroids[i][0][1]*list_centroids[i][1] + centroids[sommets_connexes[index][j]][1]*stats[sommets_connexes[index][j]][4])/(list_centroids[i][1]+stats[sommets_connexes[index][j]][4])
+                list_centroids[i][1]=list_centroids[i][1]+stats[sommets_connexes[index][j]][4]
+    
     return list_centroids
 
 
@@ -164,21 +171,26 @@ def plt_fig(image,labels,nb_labels,list_centroids):
         plt.scatter(x, y, color='red', marker='o', s=10) 
 
 
-
+def new_image_paquet(image,nb_labels,labels):
+    for label in range(1, nb_labels):  # Commencer à 1 car le label 0 représente le fond
+    
+        couleur = np.random.randint(0, 256, 3)  # Générer une couleur aléatoire (RVB)
+        image[labels == label] = couleur
+    return image
 
 def video_en_donne_solide(total_frame, nom_fichier, video,distance_paquets,nb_paquets_impose):
     tab_donne=[]
-    fond=cv.imread("cinema_teach/static/cinema_teach/cache/"+nom_fichier + "_0.png")
-    gray_fond = cv.cvtColor(fond, cv.COLOR_BGR2GRAY)
+    
     for i in range (total_frame):
         nom = "cinema_teach/static/cinema_teach/cache/"+ nom_fichier + "_"+ str(i)+".png"
         image=cv.imread(f"{nom}")
-        nb_labels,labels,stats,centroids=calcul_masque_solide(image=image,gray_fond=gray_fond,seuil=10)
+        nb_labels,labels,stats,centroids=calcul_masque_solide(image=image,gray_fond=gray_fond,seuil=65)
         sommets_connexes=mat_adj_paquets(nb_labels,centroids, distance_paquets)
         labels=agglomerer_paquets(labels=labels,sommets_connexes=sommets_connexes)
         nb_points_ensembles_final=selec_paquets(sommets_connexes=sommets_connexes,stats=stats,nb_paquets_impose=nb_paquets_impose)
         labels=reduc_nb_paquets(labels, nb_points_ensembles_final)
-        tab_donne.append((calc_centre_paquets(centroids=centroids,sommets_connexes=sommets_connexes,nb_points_ensembles_final=nb_points_ensembles_final,stats=stats,nb_paquets_impose=nb_paquets_impose),i/(video.get(cv.CAP_PROP_FPS))))
+        
+        #tab_donne.append((calc_centre_paquets(centroids=centroids,sommets_connexes=sommets_connexes,nb_points_ensembles_final=nb_points_ensembles_final,stats=stats,nb_paquets_impose=nb_paquets_impose),i/(video.get(cv.CAP_PROP_FPS))))
     return tab_donne
     
 def fichier_video_en_images(nom_fichier,distance_paquets, nb_paquets_impose):
@@ -187,12 +199,24 @@ def fichier_video_en_images(nom_fichier,distance_paquets, nb_paquets_impose):
     tab_donne = video_en_donne_solide(total_frame=total_frame, nom_fichier=nom_fichier, video=video, distance_paquets=distance_paquets, nb_paquets_impose=nb_paquets_impose)
     return tab_donne, paths
 
-def fichier_video_avec_points(nom_fichier,debut,fin,tab_donne):
+def fichier_video_avec_points(nom_fichier,debut,fin,tab_donne,nb_paquets_impose,distance_paquets,):
     paths=[]
+    fond=cv.imread("cinema_teach/static/cinema_teach/cache/"+nom_fichier + "_0.png")
+    gray_fond = cv.cvtColor(fond, cv.COLOR_BGR2GRAY)
     for frame in range (debut,fin+1):
-        print(type(tab_donne[frame][0][0]))
-        image=cv.imread(f'cinema_teach/static/cinema_teach/cache/{nom_fichier + "_"+ str(frame)}.png')
-        image=cv.circle(image,(int(tab_donne[frame][0][1]),int(tab_donne[frame][0][0])),2,(0,255,0),-1)
+        nom = "cinema_teach/static/cinema_teach/cache/"+ nom_fichier + "_"+ str(frame)+".png"
+        image=cv.imread(f"{nom}")
+        nb_labels,labels,stats,centroids=calcul_masque_solide(image=image,gray_fond=gray_fond,seuil=65)
+        sommets_connexes=mat_adj_paquets(nb_labels,centroids, distance_paquets)
+        labels=agglomerer_paquets(labels=labels,sommets_connexes=sommets_connexes)
+        nb_points_ensembles_final=selec_paquets(sommets_connexes=sommets_connexes,stats=stats,nb_paquets_impose=nb_paquets_impose)
+        labels=reduc_nb_paquets(labels, nb_points_ensembles_final)
+        image=new_image_paquet(image,nb_labels,labels)
+        ##
+        #print(type(tab_donne[frame][0][0]))
+        
+        
+        #image=cv.circle(image,(int(tab_donne[frame][0][1]),int(tab_donne[frame][0][0])),2,(0,255,0),-1)
         path="/static/cinema_teach/cache/"+nom_fichier + "_traite_"+ str(frame)+".png"
         cv.imwrite(f'cinema_teach/static/cinema_teach/cache/{nom_fichier + "_traite_"+ str(frame)}.png',image)
         paths.append(path)
