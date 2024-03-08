@@ -56,8 +56,8 @@ def trouver_sommets_connexes(matrice_adjacence):
 def mat_adj_paquets(nb_labels,centroids, distance_paquets):
     
     proximite=np.zeros((nb_labels-1,nb_labels-1))
-    for i in range(1, nb_labels-1):
-        for j in range(1,nb_labels-1):
+    for i in range(1, nb_labels):
+        for j in range(1,nb_labels):
             if np.sqrt((centroids[i][0] - centroids[j][0])**2 + (centroids[i][1] - centroids[j][1])**2)<distance_paquets:
                 proximite[i-1,j-1]=1
     sommets_connexes=trouver_sommets_connexes(proximite)
@@ -119,22 +119,22 @@ def calc_centre_paquets(centroids,sommets_connexes,nb_points_ensembles_final,sta
 
     #Calcul effectif des centroides avec leur poids une fois les paquets proches rassemblés
     list_centroids=[]
-    if (len(nb_paquets_impose)<=len(nb_points_ensembles_final)):
-        for i in range(0,nb_paquets_impose):
+    
+    for i in range(0,nb_paquets_impose):
         
-            val_ieme_premier=nb_points_ensembles_final[i][0]-1
-            print(nb_points_ensembles_final[i][0])
-            for k in range(len(sommets_connexes)):
-                if sommets_connexes[k][0]==val_ieme_premier+1:
-                    index=k #indice de l'emplacement dans sommets_connexes de la valeur label qui regroupe les blocs 
-            list_centroids.append([[centroids[val_ieme_premier+1][0],centroids[val_ieme_premier+1][1]],stats[val_ieme_premier+1][4]])
+        val_ieme_premier=nb_points_ensembles_final[i][0]-1
+        print(nb_points_ensembles_final[i][0])
+        for k in range(len(sommets_connexes)):
+            if sommets_connexes[k][0]==val_ieme_premier+1:
+                index=k #indice de l'emplacement dans sommets_connexes de la valeur label qui regroupe les blocs 
+        list_centroids.append([[centroids[val_ieme_premier+1][0],centroids[val_ieme_premier+1][1]],stats[val_ieme_premier+1][4]])
     
-            for j in range(1,len(sommets_connexes[index])):
-                list_centroids[i][0][0]=(list_centroids[i][0][0]*list_centroids[i][1] + centroids[sommets_connexes[index][j]][0]*stats[sommets_connexes[index][j]][4])/(list_centroids[i][1]+stats[sommets_connexes[index][j]][4])
-                list_centroids[i][0][1]=(list_centroids[i][0][1]*list_centroids[i][1] + centroids[sommets_connexes[index][j]][1]*stats[sommets_connexes[index][j]][4])/(list_centroids[i][1]+stats[sommets_connexes[index][j]][4])
-                list_centroids[i][1]=list_centroids[i][1]+stats[sommets_connexes[index][j]][4]
+        for j in range(1,len(sommets_connexes[index])):
+            list_centroids[i][0][0]=(list_centroids[i][0][0]*list_centroids[i][1] + centroids[sommets_connexes[index][j]][0]*stats[sommets_connexes[index][j]][4])/(list_centroids[i][1]+stats[sommets_connexes[index][j]][4])
+            list_centroids[i][0][1]=(list_centroids[i][0][1]*list_centroids[i][1] + centroids[sommets_connexes[index][j]][1]*stats[sommets_connexes[index][j]][4])/(list_centroids[i][1]+stats[sommets_connexes[index][j]][4])
+            list_centroids[i][1]=list_centroids[i][1]+stats[sommets_connexes[index][j]][4]
     
-    return list_centroids
+    return list_centroids #[[(x,y),nb points],...]
 
 
 
@@ -170,28 +170,27 @@ def plt_fig(image,labels,nb_labels,list_centroids):
     # Tracer le point sur le graphique
         plt.scatter(x, y, color='red', marker='o', s=10) 
 
-
+#Il faudra préciser que le nombre de paquets ne doit pas dépasser 5 (ou sinon faire une modification du code)
 def new_image_paquet(image,nb_labels,labels):
+      # Définir un ensemble de couleurs prédéfinies
+    couleurs_predefinies = [ (255,0, 0),(0, 255, 0), (255, 255, 0), (255, 0, 255), (0, 255, 255)]
+
+    # Initialiser un dictionnaire pour stocker les correspondances label-couleur
+    correspondances_couleurs = {}
+
+    # Assigner une couleur à chaque label
     for label in range(1, nb_labels):  # Commencer à 1 car le label 0 représente le fond
-    
-        couleur = np.random.randint(0, 256, 3)  # Générer une couleur aléatoire (RVB)
+        # Utiliser un ensemble cyclique de couleurs prédéfinies
+        couleur = couleurs_predefinies[(label - 1) % len(couleurs_predefinies)]
+        correspondances_couleurs[label] = couleur
+
+    # Appliquer les couleurs à l'image en fonction des labels
+    for label, couleur in correspondances_couleurs.items():
         image[labels == label] = couleur
+
     return image
 
-def video_en_donne_solide(total_frame, nom_fichier, video,distance_paquets,nb_paquets_impose):
-    tab_donne=[]
-    
-    for i in range (total_frame):
-        nom = "cinema_teach/static/cinema_teach/cache/"+ nom_fichier + "_"+ str(i)+".png"
-        image=cv.imread(f"{nom}")
-        nb_labels,labels,stats,centroids=calcul_masque_solide(image=image,gray_fond=gray_fond,seuil=65)
-        sommets_connexes=mat_adj_paquets(nb_labels,centroids, distance_paquets)
-        labels=agglomerer_paquets(labels=labels,sommets_connexes=sommets_connexes)
-        nb_points_ensembles_final=selec_paquets(sommets_connexes=sommets_connexes,stats=stats,nb_paquets_impose=nb_paquets_impose)
-        labels=reduc_nb_paquets(labels, nb_points_ensembles_final)
-        
-        #tab_donne.append((calc_centre_paquets(centroids=centroids,sommets_connexes=sommets_connexes,nb_points_ensembles_final=nb_points_ensembles_final,stats=stats,nb_paquets_impose=nb_paquets_impose),i/(video.get(cv.CAP_PROP_FPS))))
-    return tab_donne
+
     
 
 
@@ -210,10 +209,12 @@ def fichier_video_avec_points(nom_fichier,debut,fin,nb_paquets_impose,distance_p
         labels=reduc_nb_paquets(labels, nb_points_ensembles_final)
         image=new_image_paquet(image,nb_labels,labels)
         ##
-        #print(type(tab_donne[frame][0][0]))
         
-        #tab_donne.append((calc_centre_paquets(centroids,sommets_connexes,nb_points_ensembles_final,stats,nb_paquets_impose)))
-        #image=cv.circle(image,(int(tab_donne[frame][0][1]),int(tab_donne[frame][0][0])),2,(0,255,0),-1)
+        
+        tab_donne.append((calc_centre_paquets(centroids,sommets_connexes,nb_points_ensembles_final,stats,nb_paquets_impose)))
+        print(tab_donne)
+        for j in range(nb_paquets_impose):
+            image=cv.circle(image,(int(tab_donne[frame-debut][j][0][0]),int(tab_donne[frame-debut][j][0][1])),5,(0,0,255),-1)
         path="/static/cinema_teach/cache/"+nom_fichier + "_traite_"+ str(frame)+".png"
         cv.imwrite(f'cinema_teach/static/cinema_teach/cache/{nom_fichier + "_traite_"+ str(frame)}.png',image)
         paths.append(path)
