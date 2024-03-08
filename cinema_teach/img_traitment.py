@@ -13,16 +13,17 @@ def calcul_masque (image, gray_fond, seuil):
     (longueur, largeur) = np.shape(gray_fond)
     masque = np.zeros((longueur, largeur))
     #SOLUTION 1
-    for x in range (longueur):
-        for y in range (largeur):
-            if (abs(int(gray_frame[x][y])-int(gray_fond[x][y])))>seuil:
-                masque[x][y]=255
+    #for x in range (longueur):
+    #    for y in range (largeur):
+    #        if (abs(int(gray_frame[x][y])-int(gray_fond[x][y])))>seuil:
+    #            masque[x][y]=255
     #-------------
     #SOLUION 2 
-    """""
+    gray_fond=gray_fond.astype(int)
+    gray_frame=gray_frame.astype(int)
     masque_bool = abs(gray_fond - gray_frame)>seuil
     masque = masque_bool*np.ones((longueur, largeur), np.uint8)*255
-    #------------"""
+    #------------
     kernel=np.ones((5, 5), np.uint8)
     masque=cv2.erode(masque, kernel, iterations=3)
     return masque
