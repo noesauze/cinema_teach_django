@@ -139,6 +139,9 @@ def solide(request):
             destination.close()
             print(nom_fichier)
 
+  
+
+
             tab_donnees, paths = img_traitment.fichier_video_en_images(nom_fichier)
             request.session['tab_donnees'] = tab_donnees
             request.session['paths'] = paths
@@ -173,14 +176,18 @@ def vider(request):
 
 
 def etalonnage_solide(request):
+    
+    
+    
     if request.method == 'POST':
-        formulaire = FormulaireEtalonnageSolide(request.POST)
+        debut = request.session['debut']
+        fin = request.session['fin']
+        formulaire = FormulaireEtalonnageSolide(request.POST, initial={'debut': debut, 'fin': fin})
+        
         if formulaire.is_valid():
-            debut = formulaire.cleaned_data['debut']
-            fin = formulaire.cleaned_data['fin']
+
             nb_paquets_impose = formulaire.cleaned_data['nb_paquets_impose']
             distance_paquets = formulaire.cleaned_data['distance_paquets']
-            taille_objet = formulaire.cleaned_data['taille_objet']
             seuil = formulaire.cleaned_data['seuil']
             nom_fichier = request.session['nom_fichier']
             tab_donnees = request.session['tab_donnees']
@@ -191,21 +198,19 @@ def etalonnage_solide(request):
             
             
             request.session['path_traites'] = paths_traites
-            
-
-
-            image_data = plot_fig(tab_donnees, int(taille_objet))
-
-
-            return render(request, 'cinema_teach/solide-etalonnage.html', {'nom_fichier': nom_fichier, 'paths': paths_traites, 'image_data':image_data, 'formulaire':formulaire})
+            request.session['seuil']=seuil
+            request.session['nb_paquets_impose']=nb_paquets_impose
+            request.session['distance_paquets']=distance_paquets
+          
+            return render(request, 'cinema_teach/solide-etalonnage.html', {'nom_fichier': nom_fichier, 'paths': paths_traites,  'formulaire':formulaire})
         else:
             print("non valide")
             print(formulaire.errors)  # Afficher les erreurs de validation du formulaire
-
+  
             # Le formulaire n'est pas valide, vous pouvez gérer les erreurs ici
             pass
-        
-
+    
+    
     return render(request, 'cinema_teach/solide-etalonnage.html', {})
 
 def resultats_solide(request):

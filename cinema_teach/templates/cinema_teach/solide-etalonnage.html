@@ -83,8 +83,13 @@
   
                           
                           <div class="form-group row">
-                            <button type="submit" class="btn btn-primary btn-lg btn-block">Etalonnage</button>
+                            <div class="col-11">
+                              <button type="submit" class="btn btn-primary btn-lg btn-block">Etalonnage</button>
                             </div>
+                            <div class="col-1">
+                              <button id="bouton-modal" class="btn btn-info" data-toggle="modal" data-target="#simpleModal" onclick="showParagraphe('Etalonnage')">?</button>
+                            </div>
+                          </div>
                           
                         </form>
                         <form id="c_form-h" method="POST" action="/modules/solide/resultats">
@@ -98,6 +103,8 @@
       </div>
     </div>
   </div>
+  {% include 'cinema_teach/modale_simple.html' %}
+
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
     integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
     crossorigin="anonymous"></script>

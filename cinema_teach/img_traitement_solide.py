@@ -15,18 +15,17 @@ def calcul_masque_solide (image, gray_fond, seuil):
     (longueur, largeur) = np.shape(gray_fond)
     masque = np.zeros((longueur, largeur),np.uint8)
     #SOLUTION 1
-    for x in range (longueur):
-        for y in range (largeur):
-            if (abs(int(gray_frame[x][y])-int(gray_fond[x][y])))>seuil:
-                masque[x][y]=255
+    #for x in range (longueur):
+    #    for y in range (largeur):
+    #        if (abs(int(gray_frame[x][y])-int(gray_fond[x][y])))>seuil:
+    #            masque[x][y]=255
     #-------------'''
     #SOLUION 2 
-    ''''
+    gray_fond=gray_fond.astype(int)
+    gray_frame=gray_frame.astype(int)
     masque_bool = abs(gray_fond - gray_frame)>seuil
-    print("masque_bool")
-    print(masque_bool)
     masque = masque_bool*np.ones((longueur, largeur), np.uint8)*255
-    #------------'''
+    #------------
     kernel=np.ones((5, 5), np.uint8)
     masque=cv.erode(masque, kernel, iterations=3)
     
@@ -123,7 +122,7 @@ def calc_centre_paquets(centroids,sommets_connexes,nb_points_ensembles_final,sta
     for i in range(0,nb_paquets_impose):
         
         val_ieme_premier=nb_points_ensembles_final[i][0]-1
-        print(nb_points_ensembles_final[i][0])
+        
         for k in range(len(sommets_connexes)):
             if sommets_connexes[k][0]==val_ieme_premier+1:
                 index=k #indice de l'emplacement dans sommets_connexes de la valeur label qui regroupe les blocs 
@@ -145,7 +144,7 @@ def calc_centre_paquets(centroids,sommets_connexes,nb_points_ensembles_final,sta
 
 
 
-
+'''''
 def plt_fig(image,labels,nb_labels,list_centroids):
     image_couleur = image.copy()
 
@@ -168,7 +167,7 @@ def plt_fig(image,labels,nb_labels,list_centroids):
         x, y = premier_point
     
     # Tracer le point sur le graphique
-        plt.scatter(x, y, color='red', marker='o', s=10) 
+        plt.scatter(x, y, color='red', marker='o', s=10) '''
 
 #Il faudra préciser que le nombre de paquets ne doit pas dépasser 5 (ou sinon faire une modification du code)
 def new_image_paquet(image,nb_labels,labels):
@@ -197,6 +196,7 @@ def new_image_paquet(image,nb_labels,labels):
 def fichier_video_avec_points(nom_fichier,debut,fin,nb_paquets_impose,distance_paquets,seuil):
     paths=[]
     tab_donne=[]
+    video=cv.VideoCapture("media/"+nom_fichier)
     fond=cv.imread("cinema_teach/static/cinema_teach/cache/"+nom_fichier + "_0.png")
     gray_fond = cv.cvtColor(fond, cv.COLOR_BGR2GRAY)
     for frame in range (debut,fin+1):
@@ -211,10 +211,11 @@ def fichier_video_avec_points(nom_fichier,debut,fin,nb_paquets_impose,distance_p
         ##
         
         
-        tab_donne.append((calc_centre_paquets(centroids,sommets_connexes,nb_points_ensembles_final,stats,nb_paquets_impose)))
+        tab_donne.append((calc_centre_paquets(centroids,sommets_connexes,nb_points_ensembles_final,stats,nb_paquets_impose),frame/(video.get(cv.CAP_PROP_FPS))))
         print(tab_donne)
+        #[[[(x,y),nb points],...],time]
         for j in range(nb_paquets_impose):
-            image=cv.circle(image,(int(tab_donne[frame-debut][j][0][0]),int(tab_donne[frame-debut][j][0][1])),5,(0,0,255),-1)
+            image=cv.circle(image,(int(tab_donne[frame-debut][0][j][0][0]),int(tab_donne[frame-debut][0][j][0][1])),5,(0,0,255),-1)
         path="/static/cinema_teach/cache/"+nom_fichier + "_traite_"+ str(frame)+".png"
         cv.imwrite(f'cinema_teach/static/cinema_teach/cache/{nom_fichier + "_traite_"+ str(frame)}.png',image)
         paths.append(path)
