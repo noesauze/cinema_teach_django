@@ -1,5 +1,4 @@
 import numpy as np
-from .meca_point import video_en_image
 
 def calculate_vitesses(frame,tab_donnes):
     list_vitesses=[]
@@ -28,4 +27,3 @@ def video_vitesses(tab_donnes):
     for frame in range(len(tab_donnes)-1):
         list_vitesses=calculate_vitesses(frame,tab_donnes)
         video_vitesses.append(list_vitesses)
-    
