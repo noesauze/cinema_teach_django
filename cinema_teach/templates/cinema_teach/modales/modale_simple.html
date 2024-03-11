@@ -1,0 +1,25 @@
+<!-- Modale pour afficher une modale contenant du texte -->
+<div class="modal" id="simpleModal">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Aide</h5>
+        <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body" style="text-align: center;">
+        <p id="paragraphe"></p>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  document.getElementById("bouton-modal").addEventListener("click", function (event) {
+    // Empêcher le comportement par défaut du bouton (envoi du formulaire)
+    console.log("Affichage de la modale d'informations");
+    event.preventDefault();
+  });
+  function showParagraphe(texte) {
+    var paragraphe = document.getElementById('paragraphe');
+    paragraphe.textContent = texte;
+  }
+</script>

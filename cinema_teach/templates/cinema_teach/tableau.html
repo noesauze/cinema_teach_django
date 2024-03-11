@@ -1,18 +1,67 @@
-<div class="row border-bottom border-primary">
-    <div class="col-md-12">
-      <h4 class="pt-3">Tableaux</h4>
-      <div class="row">
-        <div class="col-md-12 d-flex justify-content-center">
-          <table id="table" data-pagination="false" data-show-columns="true" data-show-export="true">
-            <thead>
-              <tr>
-                <th data-field="id" data-width="100">ID</th>
-                <th data-field="name" data-width="300">Item Name</th>
-                <th data-field="price" data-width="200">Item Price</th>
-              </tr>
-            </thead>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
+{% load static %}
+
+<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css'>
+<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.0/bootstrap-table.min.css'>
+<link rel='stylesheet' href='https://rawgit.com/vitalets/x-editable/master/dist/bootstrap3-editable/css/bootstrap-editable.css'>
+<script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.0/bootstrap-table.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/extensions/editable/bootstrap-table-editable.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/extensions/export/bootstrap-table-export.js'></script>
+<script src="http://frontendfreecode.com/codes/files/tableExport.js"></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/extensions/filter-control/bootstrap-table-filter-control.js'></script>
+<style>
+#toolbar {
+  margin: 0;
+}
+</style>
+
+<div id="toolbar" class="select">
+  <select class="form-control">
+    <option value="">Export basique</option>
+    <option value="all">Tout exporter</option>
+    <option value="selected">Exporter la sélection</option>
+  </select>
+</div>
+
+<table id="table"
+  data-show-export="true"
+  data-pagination="true"
+  data-side-pagination="server"
+  data-click-to-select="true"
+  data-toolbar="#toolbar"
+  data-show-toggle="true"
+  data-show-columns="true"
+  data-url="https://examples.wenzhixin.net.cn/examples/bootstrap_table/data">
+</table>
+
+<script>
+  var $table = $('#table')
+
+  $(function() {
+    $('#toolbar').find('select').change(function () {
+      $table.bootstrapTable('destroy').bootstrapTable({
+        exportDataType: $(this).val(),
+        exportTypes: ['json', 'xml', 'csv', 'txt', 'sql', 'excel', 'pdf'],
+        columns: [
+          {
+            field: 'state',
+            checkbox: true,
+            visible: $(this).val() === 'selected'
+          },
+          {
+            field: 'id',
+            title: 'ID'
+          },
+          {
+            field: 'name',
+            title: 'Item Name'
+          },
+          {
+            field: 'price',
+            title: 'Item Price'
+          }
+        ]
+      })
+    }).trigger('change')
+  })
+</script>

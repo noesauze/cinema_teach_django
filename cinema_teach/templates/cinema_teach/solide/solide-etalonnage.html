@@ -1,4 +1,4 @@
-{% extends 'cinema_teach/base.html' %}
+{% extends 'cinema_teach/index/base.html' %}
 {% load static %}
 {% block title %}Etalonnage{% endblock %}
 {% block style %}<link rel="stylesheet" href="{% static 'cinema_teach/modules.css' %}">{% endblock %}
@@ -29,11 +29,11 @@
               <div class="row">
                 <div class="col-md-12 border-primary border-bottom">
                   <h4 class="">Aperçu image</h4>
-                  {% include 'cinema_teach/modale_image.html' %}
+                  {% include 'cinema_teach/modales/modale_image.html' %}
                   {% if paths %}
                   <div class="row flex-nowrap overflow-auto pb-0 mb-1" id="pictures">
                     {% for path in paths %}
-                    <div class="col-md-3 py-2"><img class="d-block img-fluid" src="{{ path }}" data-toggle="modal" data-target="#imageModal" onclick="showImage('{{ path }}')" alt="Image {{ forloop.counter0 }}">{{ forloop.counter0 }}
+                    <div class="col-md-3 py-2"><img class="d-block img-fluid" src="{{ path }}" data-bs-toggle="modal" data-bs-target="#imageModal" onclick="showImage('{{ path }}')" alt="Image {{ forloop.counter0 }}">{{ forloop.counter0 }}
                     </div>
                     {% endfor %}
                   </div>
@@ -87,7 +87,7 @@
                               <button type="submit" class="btn btn-primary btn-lg btn-block">Etalonnage</button>
                             </div>
                             <div class="col-1">
-                              <button id="bouton-modal" class="btn btn-info" data-toggle="modal" data-target="#simpleModal" onclick="showParagraphe('Etalonnage')">?</button>
+                              <button id="bouton-modal" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#simpleModal" onclick="showParagraphe('Etalonnage')">?</button>
                             </div>
                           </div>
                           
@@ -103,7 +103,7 @@
       </div>
     </div>
   </div>
-  {% include 'cinema_teach/modale_simple.html' %}
+  {% include 'cinema_teach/modales/modale_simple.html' %}
 
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
     integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"

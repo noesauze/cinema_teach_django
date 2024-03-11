@@ -30,15 +30,15 @@ from django.http import JsonResponse
 
 
 def index(request):
-    template = loader.get_template("cinema_teach/index.html")
+    template = loader.get_template("cinema_teach/index/index.html")
     return HttpResponse(template.render({},request))
 
 def modules(request):
-    template = loader.get_template("cinema_teach/modules.html")
+    template = loader.get_template("cinema_teach/index/modules.html")
     return HttpResponse(template.render({},request))
 
 def about(request):
-    template = loader.get_template("cinema_teach/about.html")
+    template = loader.get_template("cinema_teach/index/about.html")
     return HttpResponse(template.render({},request))
 
 
@@ -61,7 +61,7 @@ def resultats_point(request):
             image_data = plot_fig(tab_donnees, int(taille_objet))
 
 
-            return render(request, 'cinema_teach/point-resultats.html', {'nom_fichier': nom_fichier, 'paths': paths_traites, 'image_data':image_data})
+            return render(request, 'cinema_teach/point/point-resultats.html', {'nom_fichier': nom_fichier, 'paths': paths_traites, 'image_data':image_data})
         else:
             print("non valide")
             print(formulaire.errors)  # Afficher les erreurs de validation du formulaire
@@ -70,7 +70,7 @@ def resultats_point(request):
             pass
         
 
-    return render(request, 'cinema_teach/point-resultats.html', {})
+    return render(request, 'cinema_teach/point/point-resultats.html', {})
 
 def point(request):
     if request.method == 'POST':
@@ -89,7 +89,7 @@ def point(request):
             request.session['nom_fichier'] = nom_fichier
             formulaire = FormulaireParametresPoint()
 
-            return render(request, 'cinema_teach/point.html', {'nom_fichier': nom_fichier, 'paths': paths, 'formulaire': formulaire})
+            return render(request, 'cinema_teach/point/point.html', {'nom_fichier': nom_fichier, 'paths': paths, 'formulaire': formulaire})
         
         else:
             # Récupérer les coordonnées du point cliqué depuis la requête POST
@@ -102,7 +102,7 @@ def point(request):
         form = ImportForm()
         request.session['pointsEchelle'] = []
 
-    return render(request, 'cinema_teach/point.html', {'form': form, 'formulaire':FormulaireParametresPoint()})
+    return render(request, 'cinema_teach/point/point.html', {'form': form, 'formulaire':FormulaireParametresPoint()})
 
 def post_point(request):
     print("dans la vue")
@@ -152,11 +152,11 @@ def solide(request):
             
             print(paths)
             # Vous pouvez effectuer d'autres opérations ici si nécessaire
-            return render(request, 'cinema_teach/solide.html', {'nom_fichier': nom_fichier, 'paths': paths,'formulaire': formulaire})
+            return render(request, 'cinema_teach/solide/solide.html', {'nom_fichier': nom_fichier, 'paths': paths,'formulaire': formulaire})
     else:
         form = ImportForm()
 
-    return render(request, 'cinema_teach/solide.html', {'form': form,'formulaire': FormulaireParametresSolide})
+    return render(request, 'cinema_teach/solide/solide.html', {'form': form,'formulaire': FormulaireParametresSolide})
 
 def vider(request):
 
@@ -201,7 +201,7 @@ def init_etalonnage_solide(request):
             request.session['nb_paquets_impose']=nb_paquets_impose
             request.session['distance_paquets']=distance_paquets
           
-            return render(request, 'cinema_teach/solide-etalonnage.html', {'nom_fichier': nom_fichier, 'paths': paths_traites,  'formulaire':formulaire})
+            return render(request, 'cinema_teach/solide/solide-etalonnage.html', {'nom_fichier': nom_fichier, 'paths': paths_traites,  'formulaire':formulaire})
         else:
             print("non valide")
             print(formulaire.errors)  # Afficher les erreurs de validation du formulaire
@@ -210,7 +210,7 @@ def init_etalonnage_solide(request):
             pass
     
     
-    return render(request, 'cinema_teach/solide-etalonnage.html', {})
+    return render(request, 'cinema_teach/solide/solide-etalonnage.html', {})
 
 
 def etalonnage_solide(request):
@@ -249,7 +249,7 @@ def etalonnage_solide(request):
             print(debut)
             request.session['fin']=fin
           
-            return render(request, 'cinema_teach/solide-etalonnage.html', {'nom_fichier': nom_fichier, 'paths': paths_traites,  'formulaire':formulaire})
+            return render(request, 'cinema_teach/solide/solide-etalonnage.html', {'nom_fichier': nom_fichier, 'paths': paths_traites,  'formulaire':formulaire})
         else:
             print("non valide")
             print(formulaire.errors)  # Afficher les erreurs de validation du formulaire
@@ -258,7 +258,7 @@ def etalonnage_solide(request):
             pass
     
     
-    return render(request, 'cinema_teach/solide-etalonnage.html', {})
+    return render(request, 'cinema_teach/solide/solide-etalonnage.html', {})
 
 def resultats_solide(request):
     if request.method == 'POST':
@@ -282,7 +282,7 @@ def resultats_solide(request):
             image_data = plot_fig(tab_donnees, int(taille_objet))
 
 
-            return render(request, 'cinema_teach/solide-resultats.html', {'nom_fichier': nom_fichier, 'paths': paths_traites, 'image_data':image_data})
+            return render(request, 'cinema_teach/solide/solide-resultats.html', {'nom_fichier': nom_fichier, 'paths': paths_traites, 'image_data':image_data})
         else:
             print("non valide")
             print(formulaire.errors)  # Afficher les erreurs de validation du formulaire
@@ -291,7 +291,7 @@ def resultats_solide(request):
             pass
         
 
-    return render(request, 'cinema_teach/solide-resultats.html', {})
+    return render(request, 'cinema_teach/solide/solide-resultats.html', {})
 
 
 def post_solide(request):

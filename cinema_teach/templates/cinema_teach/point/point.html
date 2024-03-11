@@ -1,6 +1,6 @@
-{% extends 'cinema_teach/base.html' %}
+{% extends 'cinema_teach/index/base.html' %}
 
-{% block title %}Cinématique du solide{% endblock %}
+{% block title %}Cinématique du point{% endblock %}
 {% block style %}<link rel="stylesheet" href="/static/cinema_teach/modules.css">{% endblock %}
 
 {% block content %}
@@ -9,15 +9,11 @@
     <div class="container">
       <div class="row">
         <div class="col-md-6">
-          <h1 class="pt-3">Cinématique du solide</h1>
+          <h1 class="pt-3">Cinématique du point</h1>
         </div>
         <div class="col-md-6 d-flex justify-content-center">
-          <div class="btn-group align-items-center w-75 pt-3">
-            <a href="#" class="btn btn-primary">Paramétrage</a> 
-            <a href="/modules/solide/etalonnage" class="btn btn-outline-primary">Etalonnage</a>
-            <a href="/modules/solide/resultats" class="btn btn-outline-primary">Résultats</a>
-
-            </div>
+          <div class="btn-group align-items-center w-75 pt-3"> <a href="#" class="btn btn-primary">Paramétrage</a> <span
+              class="btn btn-outline-primary">Résultats</span> </div>
         </div>
       </div>
     </div>
@@ -36,7 +32,7 @@
                       <h4 class="">Import des images</h4>
                     </div>
                     <div class="col-md-6 d-flex justify-content-end"><a class="btn btn-outline-primary" href="#"
-                        data-toggle="modal" data-target="#import-img">Importer&nbsp;<i class="fa fa-fw fa-video-camera"></i>
+                      data-bs-toggle="modal" data-bs-target="#import-img">Importer&nbsp;<i class="fa fa-fw fa-video-camera"></i>
                       </a></div>
                   </div>
                   <div class="row">
@@ -47,11 +43,11 @@
                       {% endif %}
                     </div>
                   </div>
-                  {% include 'cinema_teach/regler_echelle.html' %}
+                  {% include 'cinema_teach/modales/regler_echelle.html' %}
                   {% if paths %}
                   <div class="row flex-nowrap overflow-auto pb-0 mb-1" id="pictures">
                     {% for path in paths %}
-                    <div class="col-md-3 py-2"><img class="d-block img-fluid" src="{{ path }}" data-toggle="modal" data-target="#imageModal" onclick="showImage('{{ path }}')" alt="Image {{ forloop.counter0 }}">{{ forloop.counter0 }}
+                    <div class="col-md-3 py-2"><img class="d-block img-fluid" src="{{ path }}" data-bs-toggle="modal" data-bs-target="#imageModal" onclick="showImage('{{ path }}')" alt="Image {{ forloop.counter0 }}">{{ forloop.counter0 }}
                     </div>
                     {% endfor %}
                   </div>
@@ -80,7 +76,7 @@
                   <h4 class="pt-3">Gestion des paramètres</h4>
                   <div class="row">
                     <div class="col-md-12">
-                      <form id="c_form-h" method="POST" action="/modules/solide/etalonnage">
+                      <form id="c_form-h" method="POST" action="/modules/point/resultats">
                         {% csrf_token %}
                         <div class="form-group row">
                           <label for="{{ formulaire.debut.id_for_label }}" class="col-form-label col-3">Début du
@@ -112,34 +108,12 @@
                             <p>px</p>
                           </div>
                           <div class="col-1">
-                            <button id="bouton-modal" class="btn btn-info" data-toggle="modal" data-target="#simpleModal" onclick="showParagraphe('Pour mesurer une distance, cliquer sur une image de la vidéo')">?</button>
+                            <button id="bouton-modal" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#simpleModal" onclick="showParagraphe('Pour mesurer une distance, cliquer sur une image de la vidéo')">?</button>
                           </div>
                         </div>
                         <div class="form-group row">
-                          <label for="{{ formulaire.nb_paquets_impose.id_for_label }}" class="col-form-label col-3">Nombre de paquets</label>
-                          <div class="col-9">
-                            {{ formulaire.nb_paquets_impose }}                       
-                          </div>
-                        </div>
-                        
-                        <div class="form-group row">
-                          <label for="{{ formulaire.distance_paquets.id_for_label }}" class="col-form-label col-3">Distance entre les paquets</label>
-                          <div class="col-9">
-                            {{ formulaire.distance_paquets }}
-                          </div>
-                        </div>
-                        <div class="form-group row">
-                          <label for="{{ formulaire.seuil.id_for_label }}" class="col-form-label col-3">Seuil</label>
-                          <div class="col-9">
-                            {{ formulaire.seuil }}                       
-                          </div>
-                        </div>
-
-                        
-                        <div class="form-group row">
-                          <button type="submit" class="btn btn-primary btn-lg btn-block">Etalonnage</button>
-                          </div>
-                        
+                           <button type="submit" class="btn btn-primary btn-lg btn-block">Traiter</button>
+                           </div>
                       </form>
 
                     </div>
@@ -153,62 +127,10 @@
     </div>
   </div>
 
-  {% include 'cinema_teach/modale_simple.html' %}
+  {% include 'cinema_teach/modales/modale_simple.html' %}
 
-  {% include 'cinema_teach/importer_fichier.html' %}
+  {% include 'cinema_teach/modales/importer_fichier.html' %}
 
-  <script src="{% static 'jquery/jquery-3.7.1.min.js' %}"></script>
-  <script>
-    document.getElementById("bouton-modal").addEventListener("click", function(event) {
-        // Empêcher le comportement par défaut du bouton (envoi du formulaire)
-        event.preventDefault();
-    });
-</script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
-    integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
-    crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-    crossorigin="anonymous"></script>
-  <link href="https://unpkg.com/bootstrap-table@1.22.1/dist/bootstrap-table.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/tableexport.jquery.plugin@1.10.21/tableExport.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/tableexport.jquery.plugin@1.10.21/libs/jsPDF/jspdf.min.js"></script>
-  <script
-    src="https://cdn.jsdelivr.net/npm/tableexport.jquery.plugin@1.10.21/libs/jsPDF-AutoTable/jspdf.plugin.autotable.js"></script>
-  <script src="https://unpkg.com/bootstrap-table@1.22.1/dist/bootstrap-table.min.js"></script>
-  <script src="https://unpkg.com/bootstrap-table@1.22.1/dist/extensions/export/bootstrap-table-export.min.js"></script>
+
   
-  <script>
-    var $table = $('#table')
-    $(function () {
-      var data = [{
-        'id': 0,
-        'name': 'Item 0',
-        'price': '$0'
-      }, {
-        'id': 1,
-        'name': 'Item 1',
-        'price': '$1'
-      }, {
-        'id': 2,
-        'name': 'Item 2',
-        'price': '$2'
-      }, {
-        'id': 3,
-        'name': 'Item 3',
-        'price': '$3'
-      }, {
-        'id': 4,
-        'name': 'Item 4',
-        'price': '$4'
-      }, {
-        'id': 5,
-        'name': 'Item 5',
-        'price': '$5'
-      }]
-      $table.bootstrapTable({
-        data: data
-      })
-    })
-  </script>
   {% endblock %}

@@ -1,4 +1,4 @@
-{% extends 'cinema_teach/base.html' %}
+{% extends 'cinema_teach/index/base.html' %}
 {% load static %}
 {% block title %}Résultats{% endblock %}
 {% block style %}<link rel="stylesheet" href="{% static 'cinema_teach/modules.css' %}">{% endblock %}
@@ -27,11 +27,11 @@
               <div class="row">
                 <div class="col-md-12 border-primary border-bottom">
                   <h4 class="">Aperçu image</h4>
-                  {% include 'cinema_teach/modale_image.html' %}
+                  {% include 'cinema_teach/modales/modale_image.html' %}
                   {% if paths %}
                   <div class="row flex-nowrap overflow-auto pb-0 mb-1" id="pictures">
                     {% for path in paths %}
-                    <div class="col-md-3 py-2"><img class="d-block img-fluid" src="{{ path }}" data-toggle="modal" data-target="#imageModal" onclick="showImage('{{ path }}')" alt="Image {{ forloop.counter0 }}">{{ forloop.counter0 }}
+                    <div class="col-md-3 py-2"><img class="d-block img-fluid" src="{{ path }}" data-bs-toggle="modal" data-bs-target="#imageModal" onclick="showImage('{{ path }}')" alt="Image {{ forloop.counter0 }}">{{ forloop.counter0 }}
                     </div>
                     {% endfor %}
                   </div>
@@ -68,53 +68,4 @@
       </div>
     </div>
   </div>
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-    crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
-    integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
-    crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-    crossorigin="anonymous"></script>
-  <link href="https://unpkg.com/bootstrap-table@1.22.1/dist/bootstrap-table.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/tableexport.jquery.plugin@1.10.21/tableExport.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/tableexport.jquery.plugin@1.10.21/libs/jsPDF/jspdf.min.js"></script>
-  <script
-    src="https://cdn.jsdelivr.net/npm/tableexport.jquery.plugin@1.10.21/libs/jsPDF-AutoTable/jspdf.plugin.autotable.js"></script>
-  <script src="https://unpkg.com/bootstrap-table@1.22.1/dist/bootstrap-table.min.js"></script>
-  <script src="https://unpkg.com/bootstrap-table@1.22.1/dist/extensions/export/bootstrap-table-export.min.js"></script>
-  <script>
-    var $table = $('#table')
-    $(function () {
-      var data = [{
-        'id': 0,
-        'name': 'Item 0',
-        'price': '$0'
-      }, {
-        'id': 1,
-        'name': 'Item 1',
-        'price': '$1'
-      }, {
-        'id': 2,
-        'name': 'Item 2',
-        'price': '$2'
-      }, {
-        'id': 3,
-        'name': 'Item 3',
-        'price': '$3'
-      }, {
-        'id': 4,
-        'name': 'Item 4',
-        'price': '$4'
-      }, {
-        'id': 5,
-        'name': 'Item 5',
-        'price': '$5'
-      }]
-      $table.bootstrapTable({
-        data: data
-      })
-    })
-  </script>
 {% endblock %}

@@ -7,13 +7,15 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Réglage de l'échelle</h5>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body" style="text-align: center;" id="modalBody">
                 <p>Mesurer une distance en plaçant 2 points sur l'image. La mesure doit être faite sur un élement du même plan que l'objet dont la cinématique est analysé.</p>
                 <img id="modalImage" class="img-fluid" src="" alt="Image en grand">
-                <p></p>
+                <div id="coords"></div>
             </div>
+            <div class="modal-footer align-items-center"><button
+                type="button" class="btn btn-secondary" data-bs-dismiss="modal">Valider</button> </div>
         </div>
     </div>
 </div>
@@ -26,12 +28,21 @@
 
     $(document).ready(function () {
 
+        $('#modalImage').mousemove(function (event) {
+            var x = event.pageX - $(this).offset().left;
+            var y = event.pageY - $(this).offset().top;
+            var offset =  $(this).offset().left;
+
+            $(".coord").remove();
+            $('<div class=\"coord\">Coordonnées '+x+', '+y+' </div>').appendTo('#coords').fadeIn();
+        })
+
         $('#modalImage').click(function (event) {
             // Récupérer les coordonnées du clic
-            var x = event.pageX - $(this).offset().left+12;
-            var y = event.pageY - $(this).offset().top+12;
-            var offset =  $(this).offset().left;
-            console.log(offset);
+            var x = event.pageX - $(this).offset().left;
+            var y = event.pageY - $(this).offset().top;
+            var offsetLeft =  $(this).offset().left;
+            var offsetTop =  $(this).offset().top;
 
             // Envoyer les coordonnées au serveur
             $.ajax({
@@ -44,18 +55,19 @@
                 },
                 success: function (response) {
                     // Ajouter un point bleu à l'emplacement cliqué
-                    posx = event.pageX - offset
+           /**         posx = x+offsetLeft/2.5
+                    posy = y+offsetTop/2.5
                     $('<div class=\"point\">').css({
                         'position': 'absolute',
-                        'left': x + 'px',
-                        'top': y + 'px',
+                        'left': posx + 'px',
+                        'top': posy + 'px',
                         'width': '10px',
                         'height': '10px',
                         'background-color': 'blue',
                         'border-radius': '50%'
-                    }).appendTo('#modalBody').fadeIn();
+                    }).appendTo('#modalBody').fadeIn();*/
                     $(".distance").remove();
-                    $("<p class='distance'>Distance : "+response.distance+" pixels</p><button class=\"distance\" id=\"supprimer\">Supprimer des éléments</button>"
+                    $("<p class='distance'>Distance : "+response.distance+" pixels</p>"
 ).appendTo('#modalBody').fadeIn();
                     $('#pixels').val(response.distance);
                     console.log("succes")
