@@ -19,6 +19,8 @@ def calcul_masque (image, gray_fond, seuil):
     #            masque[x][y]=255
     #-------------
     #SOLUION 2 
+    gray_fond=gray_fond.astype(int)
+    gray_frame=gray_frame.astype(int)
     masque_bool = abs(gray_fond - gray_frame)>seuil
     masque = masque_bool*np.ones((longueur, largeur), np.uint8)*255
     #------------
