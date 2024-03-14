@@ -35,7 +35,7 @@ def video_vitesses(tab_donnes):
         video_vitesses.append(list_vitesses)
     return video_vitesses
 
-
+#On définit les vecteurs perpendiculaires à tous les vecteurs vitesse des centroides
 def cal_perpendiculaires(list_centroids):
     n=len(list_centroids)
     for k in range(n):
@@ -49,19 +49,17 @@ def cir(list_centroids): #probleme car pas forcement que deux paquets, ou faire 
     list_perpendiculaires=cal_perpendiculaires(list_centroids)
     n=len(list_centroids)
     CIR=[]
-    
-    for l in range(len(list_centroids[0])):
-        
-        for k in range(n):
-            Vx1=list_perpendiculaires[k][l][0][0]
-            Vy1=list_perpendiculaires[k][l][0][1]
-            x1=list_perpendiculaires[k][l][1][0]
-            y1=list_perpendiculaires[k][l][1][1]
-            Vx2=list_perpendiculaires[k][l][0][0]
-            Vy2=list_perpendiculaires[k][l][0][1]
-            x2=list_perpendiculaires[k][l][1][0]
-            y2=list_perpendiculaires[k][l][1][1]
-            Px = ((Vy1 * x1 - Vx1 * y1) * (Vx2 * Vy2) - (Vx1 * y1 - Vy1 * x1) * (Vx2 * Vy2)) / (Vx1 * Vy2 - Vy1 * Vx2)
-            Py = ((Vy1 * x1 - Vx1 * y1) * (Vx2 * Vy2) - (Vx1 * y1 - Vy1 * x1) * (Vx2 * Vy2)) / (Vx1 * Vy2 - Vy1 * Vx2)
-            CIR.append([Px,Py])
+            
+    for k in range(n):
+        Vx1=list_perpendiculaires[k][0][0][0]
+        Vy1=list_perpendiculaires[k][0][0][1]
+        x1=list_perpendiculaires[k][0][1][0]
+        y1=list_perpendiculaires[k][0][1][1]
+        Vx2=list_perpendiculaires[k][1][0][0]
+        Vy2=list_perpendiculaires[k][1][0][1]
+        x2=list_perpendiculaires[k][1][1][0]
+        y2=list_perpendiculaires[k][1][1][1]
+        Px = ((Vy1 * x1 - Vx1 * y1) * (Vx2 * Vy2) - (Vx1 * y1 - Vy1 * x1) * (Vx2 * Vy2)) / (Vx1 * Vy2 - Vy1 * Vx2)
+        Py = ((Vy1 * x1 - Vx1 * y1) * (Vx2 * Vy2) - (Vx1 * y1 - Vy1 * x1) * (Vx2 * Vy2)) / (Vx1 * Vy2 - Vy1 * Vx2)
+        CIR.append([Px,Py])
     return CIR
