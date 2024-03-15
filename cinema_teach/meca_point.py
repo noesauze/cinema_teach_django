@@ -36,6 +36,8 @@ def plot_trajectory(ax, trajectory, dis_conversion):
     ax.set_xlabel('Position en Y')
     ax.set_ylabel('Position en X')
     ax.set_title('Trajectoire du mouvement')
+    ax.set_xlim(0, 35)  
+    ax.set_ylim(0, 30)
 
 def plot_fig(trajectory, dis_conversion):
     fig, ax = plt.subplots()
