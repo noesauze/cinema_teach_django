@@ -227,7 +227,9 @@ def etalonnage_solide(request):
         if formulaire.is_valid():
             
             debut = formulaire.cleaned_data['debut']
-                
+            taille_objet = formulaire.cleaned_data['taille_objet']
+            taille_pixels = formulaire.cleaned_data['taille_pixels']
+            debut = formulaire.cleaned_data['debut']
             fin = formulaire.cleaned_data['fin']
             nb_paquets_impose = formulaire.cleaned_data['nb_paquets_impose']
             distance_paquets = formulaire.cleaned_data['distance_paquets']
@@ -244,6 +246,8 @@ def etalonnage_solide(request):
             request.session['nb_paquets_impose']=nb_paquets_impose
             request.session['distance_paquets']=distance_paquets
             request.session['debut']=debut
+            request.session['taille_pixels']=taille_pixels
+            request.session['taille_objet']=taille_objet
             
             request.session['fin']=fin
           
