@@ -92,13 +92,13 @@ def selec_paquets(sommets_connexes,stats,nb_paquets_impose):
     while len(nb_points_ensembles)>nb_paquets_impose:
         list_transit=[] 
         deuxieme_min = min(liste[1] for liste in nb_points_ensembles)
-        print(deuxieme_min)
+        
         for i in range (0,len(nb_points_ensembles)):
             if nb_points_ensembles[i][1]>deuxieme_min:
                 list_transit.append(nb_points_ensembles[i])
         nb_points_ensembles=list_transit
     nb_points_ensembles_final=nb_points_ensembles
-    print(nb_points_ensembles_final)
+    
     return nb_points_ensembles_final
 
 
@@ -132,7 +132,7 @@ def calc_centre_paquets(centroids,sommets_connexes,nb_points_ensembles_final,sta
             list_centroids[i][0][0]=(list_centroids[i][0][0]*list_centroids[i][1] + centroids[sommets_connexes[index][j]][0]*stats[sommets_connexes[index][j]][4])/(list_centroids[i][1]+stats[sommets_connexes[index][j]][4])
             list_centroids[i][0][1]=(list_centroids[i][0][1]*list_centroids[i][1] + centroids[sommets_connexes[index][j]][1]*stats[sommets_connexes[index][j]][4])/(list_centroids[i][1]+stats[sommets_connexes[index][j]][4])
             list_centroids[i][1]=list_centroids[i][1]+stats[sommets_connexes[index][j]][4]
-    
+        
     return list_centroids #[[(x,y),nb points],...]
 
 
@@ -196,6 +196,7 @@ def new_image_paquet(image,nb_labels,labels):
 def fichier_video_avec_points(nom_fichier,debut,fin,nb_paquets_impose,distance_paquets,seuil):
     paths=[]
     tab_donne=[]
+    k=0
     video=cv.VideoCapture("media/"+nom_fichier)
     fond=cv.imread("cinema_teach/static/cinema_teach/cache/"+nom_fichier + "_0.png")
     gray_fond = cv.cvtColor(fond, cv.COLOR_BGR2GRAY)
@@ -203,24 +204,32 @@ def fichier_video_avec_points(nom_fichier,debut,fin,nb_paquets_impose,distance_p
         nom = "cinema_teach/static/cinema_teach/cache/"+ nom_fichier + "_"+ str(frame)+".png"
         image=cv.imread(f"{nom}")
         nb_labels,labels,stats,centroids=calcul_masque_solide(image=image,gray_fond=gray_fond,seuil=seuil)
-        sommets_connexes=mat_adj_paquets(nb_labels,centroids, distance_paquets)
-        labels=agglomerer_paquets(labels=labels,sommets_connexes=sommets_connexes)
-        nb_points_ensembles_final=selec_paquets(sommets_connexes=sommets_connexes,stats=stats,nb_paquets_impose=nb_paquets_impose)
-        labels=reduc_nb_paquets(labels, nb_points_ensembles_final)
-        image=new_image_paquet(image,nb_labels,labels)
-        ##
+        print(frame)
+        if nb_labels>=nb_paquets_impose:
+            sommets_connexes=mat_adj_paquets(nb_labels,centroids, distance_paquets)
+            labels=agglomerer_paquets(labels=labels,sommets_connexes=sommets_connexes)
+            nb_points_ensembles_final=selec_paquets(sommets_connexes=sommets_connexes,stats=stats,nb_paquets_impose=nb_paquets_impose)
+            labels=reduc_nb_paquets(labels, nb_points_ensembles_final)
+            image=new_image_paquet(image,nb_labels,labels)
         
-        
-        tab_donne.append((calc_centre_paquets(centroids,sommets_connexes,nb_points_ensembles_final,stats,nb_paquets_impose),frame/(video.get(cv.CAP_PROP_FPS))))
-        print(tab_donne)
-        #[[[(x,y),nb points],...],time]
-        for j in range(nb_paquets_impose):
-            image=cv.circle(image,(int(tab_donne[frame-debut][0][j][0][0]),int(tab_donne[frame-debut][0][j][0][1])),5,(0,0,255),-1)
+            tab_donne.append((calc_centre_paquets(centroids,sommets_connexes,nb_points_ensembles_final,stats,nb_paquets_impose),frame/(video.get(cv.CAP_PROP_FPS))))
+            print('len tab')
+            print(len(tab_donne))
+            print(frame-debut-k)
+            #[[[(x,y),nb points],...],time]
+            for j in range(nb_paquets_impose):
+                
+                image=cv.circle(image,(int(tab_donne[frame-debut-k][0][j][0][0]),int(tab_donne[frame-debut-k][0][j][0][1])),5,(0,0,255),-1)
+        else :
+            k=k+1
+            print('k=')
+            print(k)
         path="/static/cinema_teach/cache/"+nom_fichier + "_traite_"+ str(frame)+".png"
         cv.imwrite(f'cinema_teach/static/cinema_teach/cache/{nom_fichier + "_traite_"+ str(frame)}.png',image)
         paths.append(path)
-    print(paths)
-    return paths
+        print(path)
+    
+    return paths,tab_donne #comporte que les données où il y a quelque chose à voir
 
 
 
