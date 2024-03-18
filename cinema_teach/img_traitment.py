@@ -53,6 +53,9 @@ def video_en_image(video, nom_fichier):
         print("Erreur: Impossible d'ouvrir la vidéo.")
     total_frame=int(video.get(cv2.CAP_PROP_FRAME_COUNT))
     paths = []
+    cache_folder = "cinema_teach/static/cinema_teach/cache/"
+    if not os.path.exists(cache_folder):
+        os.makedirs(cache_folder)
     for frame in range (total_frame):
         video.set(cv2.CAP_PROP_POS_FRAMES,frame)
         success,image=video.read()
