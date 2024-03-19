@@ -21,6 +21,7 @@ from cinema_teach import img_traitment
 from cinema_teach import img_traitement_solide
 from django.http import HttpResponse
 from .meca_point import plot_fig
+from .meca_point import fill_table
 
 import tkinter as tk
 from PIL import Image, ImageTk
@@ -49,6 +50,7 @@ def resultats_point(request):
             debut = formulaire.cleaned_data['debut']
             fin = formulaire.cleaned_data['fin']
             taille_objet = formulaire.cleaned_data['taille_objet']
+            taille_pixels = formulaire.cleaned_data['taille_pixels']
             nom_fichier = request.session['nom_fichier']
             tab_donnees = request.session['tab_donnees']
             paths_traites=img_traitment.fichier_video_avec_points(nom_fichier,int(debut),int(fin),tab_donnees)
@@ -57,11 +59,17 @@ def resultats_point(request):
             request.session['path_traites'] = paths_traites
             
 
+            dis_conversion = int(taille_objet)/int(taille_pixels)
+            image_data = plot_fig(tab_donnees, dis_conversion, "trajectory")
+            graphe_speeds = plot_fig(tab_donnees, dis_conversion, "speed")
 
-            image_data = plot_fig(tab_donnees, int(taille_objet))
+           
+            json_data = fill_table(tab_donnees, dis_conversion)
+            request.session["json_data"] = json_data
+            print(json_data)
 
 
-            return render(request, 'cinema_teach/point/point-resultats.html', {'nom_fichier': nom_fichier, 'paths': paths_traites, 'image_data':image_data})
+            return render(request, 'cinema_teach/point/point-resultats.html', {'nom_fichier': nom_fichier, 'paths': paths_traites, 'json_data': json_data, 'image_data':image_data, 'graphe_speeds': graphe_speeds})
         else:
             print("non valide")
             print(formulaire.errors)  # Afficher les erreurs de validation du formulaire
@@ -71,6 +79,10 @@ def resultats_point(request):
         
 
     return render(request, 'cinema_teach/point/point-resultats.html', {})
+
+def get_table_data(request):
+    print("get effectué")
+    return JsonResponse(request.session["json_data"])
 
 def point(request):
     if request.method == 'POST':
@@ -281,7 +293,8 @@ def resultats_solide(request):
             
 
 
-            image_data = plot_fig(tab_donnees, int(taille_objet))
+            image_data = plot_fig(tab_donnees, int(taille_objet), "trajectory")
+
 
 
             return render(request, 'cinema_teach/solide/solide-resultats.html', {'nom_fichier': nom_fichier, 'paths': paths_traites, 'image_data':image_data})

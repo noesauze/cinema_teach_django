@@ -15,7 +15,8 @@ urlpatterns = [
     
     path("modules/solide/resultats", views.resultats_solide, name="resultats_solide"),
     path("vider-cache", views.vider, name="vider"),
-    path("modules/point/post-point", views.post_point, name="post-point")
+    path("modules/point/post-point", views.post_point, name="post-point"),
+    path("getData", views.get_table_data, name="get-table-data")
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
