@@ -18,20 +18,36 @@ def calculate_speeds(trajectory, dis_conversion):
             speeds.append(speed)
     return speeds, départ
 
+def calculate_deplacements(trajectory, dis_conversion):
+    deplacements = []
+    départ = None
+    for i in range(1, len(trajectory)):
+        (x1, y1), t1 = trajectory[i - 1]
+        (x2, y2), t2 = trajectory[i]
+        if (x1, y1) != (0, 0) and (x2, y2) != (0, 0):
+            if départ == None:
+                départ = i
+            distance = np.sqrt((x2 - x1)**2 + (y2 - y1)**2) * dis_conversion
+            deplacements.append(distance)
+    return deplacements, départ
+
 def calculate_accelerations(trajectory, dis_conversion):
     accelerations = []
+    départ = None
     for i in range(2, len(trajectory)):
         (x1, y1), t1 = trajectory[i - 2]
         (x2, y2), t2 = trajectory[i - 1]
         (x3, y3), t3 = trajectory[i]
         if (x1, y1) != (0, 0) and (x2, y2) != (0, 0) and (x3, y3) != (0, 0):
+            if départ == None:
+                départ = i
             distance1 = np.sqrt((x2 - x1)**2 + (y2 - y1)**2) * dis_conversion
             distance2 = np.sqrt((x3 - x2)**2 + (y3 - y2)**2) * dis_conversion
             speed1 = distance1 / (t2 - t1)
             speed2 = distance2 / (t3 - t2)
             acceleration = (speed2 - speed1) / (t3 - t1)
             accelerations.append(acceleration)
-    return accelerations
+    return accelerations, départ
 
 def plot_trajectory(ax, trajectory, dis_conversion):
     x = [point[0][0] * dis_conversion for point in trajectory if int(point[0][0]) != 0 and int(point[0][1]) != 0]
@@ -43,11 +59,13 @@ def plot_trajectory(ax, trajectory, dis_conversion):
     ax.set_xlim(0, 35)  
     ax.set_ylim(0, 30)
 
-def plot_displacement(ax, pos1, pos2, dis_conversion):
-    if pos1 != (0, 0) and pos2 != (0, 0):
-        ax.arrow(pos1[0] * dis_conversion, pos1[1] * dis_conversion, 
-                 (pos2[0] - pos1[0]) * dis_conversion, (pos2[1] - pos1[1]) * dis_conversion,
-                 head_width=0.1, head_length=0.1, fc='blue', ec='blue', alpha=0.7, label='Déplacement')
+def plot_displacement(ax, deplacements, dis_conversion, départ):
+    x = [point*dis_conversion for point in deplacements]
+    y = np.arange(départ, len(x) + départ)
+    ax.plot(y, x, label='Déplacement')
+    ax.set_xlabel('Image de la vidéo')
+    ax.set_ylabel('Déplacement')
+    ax.set_title('Déplacement')
 
 def plot_speed(ax, speeds, dis_conversion, départ):
     x = [point*dis_conversion for point in speeds]
@@ -57,12 +75,13 @@ def plot_speed(ax, speeds, dis_conversion, départ):
     ax.set_ylabel('Vitesse instantanée (en m/s)')
     ax.set_title('Vitesse')
 
-def plot_acceleration(ax, pos1, pos2, acceleration, dis_conversion):
-    if pos1 != (0, 0) and pos2 != (0, 0):
-        ax.arrow(pos1[0] * dis_conversion, pos1[1] * dis_conversion, 
-                 acceleration * np.cos(np.arctan2(pos2[1] - pos1[1], pos2[0] - pos1[0])) * dis_conversion,
-                 acceleration * np.sin(np.arctan2(pos2[1] - pos1[1], pos2[0] - pos1[0])) * dis_conversion,
-                 head_width=0.1, head_length=0.1, fc='green', ec='green', alpha=0.7, label='Accélération')
+def plot_acceleration(ax, acceleration, dis_conversion, départ):
+    x = [point*dis_conversion for point in acceleration]
+    y = np.arange(départ, len(x) + départ)
+    ax.plot(y, x, label='Acceleration')
+    ax.set_xlabel('Image de la vidéo')
+    ax.set_ylabel('Accelération instantanée (en m/s²)')
+    ax.set_title('Accelération')
 
 def plot_fig(trajectory, dis_conversion, type):
     fig, ax = plt.subplots()
@@ -71,6 +90,12 @@ def plot_fig(trajectory, dis_conversion, type):
     elif(type=="speed"):
         speeds, départ = calculate_speeds(trajectory, dis_conversion)
         plot_speed(ax, speeds, dis_conversion, départ)
+    elif(type=="deplacement"):
+        deplacements, départ = calculate_deplacements(trajectory, dis_conversion)
+        plot_displacement(ax, deplacements, dis_conversion, départ)
+    else:
+        accelerations, départ = calculate_deplacements(trajectory, dis_conversion)
+        plot_acceleration(ax, accelerations, dis_conversion, départ)
     buffer = BytesIO()
     plt.savefig(buffer, format='png')
     buffer.seek(0)
@@ -86,6 +111,8 @@ def fill_table(trajectory, dis_conversion):
      #Remplissage du tableau
         data = []
         speeds, start_speeds = calculate_speeds(trajectory, dis_conversion)
+        accelerations, start_accel = calculate_accelerations(trajectory, dis_conversion)
+        deplacement, start_deplacement = calculate_deplacements(trajectory=trajectory, dis_conversion=dis_conversion)
         n = len(trajectory)
         print("vitesses")
         print(speeds)
@@ -94,10 +121,19 @@ def fill_table(trajectory, dis_conversion):
                 vitesse = speeds[i-start_speeds]
             else:
                 vitesse = 0
+            if(i>=start_accel and i < start_accel+len(accelerations)):
+                accel = accelerations[i-start_accel]
+            else:
+                accel = 0
+            if(i>=start_deplacement and i < start_deplacement+len(deplacement)):
+                dep = deplacement[i-start_deplacement]
+            else:
+                dep = 0
             item = {
                 "image": i,
-                "vitesse": vitesse,
-                "price": f"${i}"
+                "deplacement": round(dep, 2),
+                "vitesse": round(vitesse, 2),
+                "acceleration": round(accel, 2)
             }
             data.append(item)
         
@@ -107,7 +143,7 @@ def fill_table(trajectory, dis_conversion):
             "rows": data
         }
 
-        json_data = json.dumps(res)
+        json_data = res
 
         return json_data
 

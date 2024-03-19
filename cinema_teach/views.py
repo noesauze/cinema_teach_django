@@ -61,7 +61,9 @@ def resultats_point(request):
 
             dis_conversion = int(taille_objet)/int(taille_pixels)
             image_data = plot_fig(tab_donnees, dis_conversion, "trajectory")
+            graphe_deplacement = plot_fig(tab_donnees, dis_conversion, "deplacement")
             graphe_speeds = plot_fig(tab_donnees, dis_conversion, "speed")
+            graphe_accelerations = plot_fig(tab_donnees, dis_conversion, "acceleration")
 
            
             json_data = fill_table(tab_donnees, dis_conversion)
@@ -69,7 +71,7 @@ def resultats_point(request):
             print(json_data)
 
 
-            return render(request, 'cinema_teach/point/point-resultats.html', {'nom_fichier': nom_fichier, 'paths': paths_traites, 'json_data': json_data, 'image_data':image_data, 'graphe_speeds': graphe_speeds})
+            return render(request, 'cinema_teach/point/point-resultats.html', {'nom_fichier': nom_fichier, 'paths': paths_traites, 'json_data': json_data, 'image_data':image_data, 'graphe_deplacement': graphe_deplacement, 'graphe_speeds': graphe_speeds, 'graphe_accelerations': graphe_accelerations})
         else:
             print("non valide")
             print(formulaire.errors)  # Afficher les erreurs de validation du formulaire
@@ -82,7 +84,7 @@ def resultats_point(request):
 
 def get_table_data(request):
     print("get effectué")
-    return JsonResponse(request.session["json_data"])
+    return JsonResponse(request.session["json_data"], safe=False)
 
 def point(request):
     if request.method == 'POST':
