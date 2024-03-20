@@ -203,6 +203,7 @@ def fichier_video_avec_points(nom_fichier,debut,fin,nb_paquets_impose,distance_p
     for frame in range (debut,fin+1):
         nom = "cinema_teach/static/cinema_teach/cache/"+ nom_fichier + "_"+ str(frame)+".png"
         image=cv.imread(f"{nom}")
+        image_centre=cv.imread(f"{nom}")
         nb_labels,labels,stats,centroids=calcul_masque_solide(image=image,gray_fond=gray_fond,seuil=seuil)
 
         if nb_labels>=nb_paquets_impose:
@@ -214,10 +215,10 @@ def fichier_video_avec_points(nom_fichier,debut,fin,nb_paquets_impose,distance_p
            
             for j in range(nb_paquets_impose):
                 
-                image=cv.circle(image,(int(tab_donne[frame-debut-k][0][j][0][0]),int(tab_donne[frame-debut-k][0][j][0][1])),10,(0,0,255),-1)
+                image_centre=cv.circle(image_centre,(int(tab_donne[frame-debut-k][0][j][0][0]),int(tab_donne[frame-debut-k][0][j][0][1])),5,(0,0,255),-1)
             
             path_centre="/static/cinema_teach/cache/"+nom_fichier + "_centre_"+ str(frame)+".png"
-            cv.imwrite(f'cinema_teach/static/cinema_teach/cache/{nom_fichier + "_centre_"+ str(frame)}.png',image)
+            cv.imwrite(f'cinema_teach/static/cinema_teach/cache/{nom_fichier + "_centre_"+ str(frame)}.png',image_centre)
             paths_centre.append(path_centre)
 
             image=new_image_paquet(image,nb_labels,labels)

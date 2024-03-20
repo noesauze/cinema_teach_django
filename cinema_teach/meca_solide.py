@@ -128,6 +128,8 @@ def calcul_video_CIR(vect_perpendiculaire):
 def affichage_vector(paths_centre,tab_donnes,nb_labels,nom_fichier,debut):
     
     paths_vector=[]
+    path_prem_image="/static/cinema_teach/cache/"+nom_fichier + "_centre_"+ str(int(debut))+".png"
+    paths_vector.append(path_prem_image)
     for frame in range(1,len(paths_centre)):
         nom2 = "cinema_teach/static/cinema_teach/cache/"+ nom_fichier + "_centre_"+ str(int(frame+debut))+".png"
 
