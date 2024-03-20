@@ -19,9 +19,12 @@ from .forms import FormulaireParametresSolide
 from .forms import FormulaireEtalonnageSolide
 from cinema_teach import img_traitment
 from cinema_teach import img_traitement_solide
+from cinema_teach import meca_solide
 from django.http import HttpResponse
 from .meca_point import plot_fig
 from .meca_point import fill_table
+
+
 
 import tkinter as tk
 from PIL import Image, ImageTk
@@ -167,6 +170,14 @@ def solide(request):
             print(paths)
             # Vous pouvez effectuer d'autres opérations ici si nécessaire
             return render(request, 'cinema_teach/solide/solide.html', {'nom_fichier': nom_fichier, 'paths': paths,'formulaire': formulaire})
+        else:
+            # Récupérer les coordonnées du point cliqué depuis la requête POST
+            x = request.POST.get('x')
+            y = request.POST.get('y')
+            
+            # Renvoyer les coordonnées du point enregistré
+            return JsonResponse({'x': point.x, 'y': point.y})
+    
     else:
         form = ImportForm()
 
@@ -215,9 +226,11 @@ def etalonnage_solide(request):
             tab_donnees = request.session['tab_donnees']
             
            
-            paths_traites, tab_donnees=img_traitement_solide.fichier_video_avec_points(nom_fichier,int(debut),int(fin),nb_paquets_impose,distance_paquets,seuil)
+            paths_traites, tab_donnees_solide,paths_centre=img_traitement_solide.fichier_video_avec_points(nom_fichier,int(debut),int(fin),nb_paquets_impose,distance_paquets,seuil)
+            json_data = img_traitement_solide.convert_to_json_serializable(tab_donnees_solide)
             
-            
+            request.session['tab_donnees_solide'] = json_data
+            request.session['paths_centre'] = paths_centre
             request.session['path_traites'] = paths_traites
             request.session['seuil']=seuil
             request.session['nb_paquets_impose']=nb_paquets_impose
@@ -242,21 +255,23 @@ def etalonnage_solide(request):
 def resultats_solide(request):
     if request.method == 'POST':
         
-        
-           
+            tab_donnees_solide=request.session['tab_donnees_solide']
+            debut=request.session['debut']
             nom_fichier = request.session['nom_fichier']
             tab_donnees = request.session['tab_donnees']
-            
-            paths_traites=request.session['path_traites']
+            nb_paquets_impose=request.session['nb_paquets_impose']
+            paths_centre=request.session['paths_centre']
             taille_objet=request.session['taille_objet'] 
             
 
+            paths_vector=meca_solide.affichage_vector(paths_centre,tab_donnees_solide,nb_paquets_impose,nom_fichier,debut)
+            #image_data = plot_fig(tab_donnees_solide, int(taille_objet), "trajectory")
 
-            image_data = plot_fig(tab_donnees, int(taille_objet), "trajectory")
+            
 
 
 
-            return render(request, 'cinema_teach/solide/solide-resultats.html', {'nom_fichier': nom_fichier, 'paths': paths_traites, 'image_data':image_data})
+            return render(request, 'cinema_teach/solide/solide-resultats.html', {'nom_fichier': nom_fichier, 'paths': paths_vector})
         
         
 

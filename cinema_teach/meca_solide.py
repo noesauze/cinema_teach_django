@@ -1,10 +1,15 @@
 import numpy as np
-from .meca_point import video_en_image
+
 from scipy.optimize import minimize
+import matplotlib as plt
+import cv2 as cv
+
+
 
 def assign_paquets(frame,tab_donnes):
     
     distance_min=[]
+    
     for i in range(len(tab_donnes[frame])):
         
         distance_glob=[]
@@ -117,4 +122,47 @@ def calcul_video_CIR(vect_perpendiculaire):
     return video_CIR
 
 
-      
+
+
+
+def affichage_vector(paths_centre,tab_donnes,nb_labels,nom_fichier,debut):
+    
+    paths_vector=[]
+    for frame in range(1,len(paths_centre)):
+        nom2 = "cinema_teach/static/cinema_teach/cache/"+ nom_fichier + "_centre_"+ str(int(frame+debut))+".png"
+
+        image=cv.imread(nom2)
+        
+        for i in range(nb_labels):
+            
+            
+            
+            
+            list_vitesses=calculate_vitesses(frame-1,tab_donnes)
+            
+            
+            start=[int(list_vitesses[i][1][0]),int(list_vitesses[i][1][1])]
+            vector=[int(list_vitesses[i][0][0]),int(list_vitesses[i][0][1])]
+            
+           
+            
+            end_point = [start[0] + vector[0], start[1] + vector[1]]
+            image=cv.arrowedLine(image, start, end_point, (0, 0, 255), thickness=2)
+            print(end_point)
+        path="/static/cinema_teach/cache/"+nom_fichier + "_vecteur_"+ str(int(frame+debut))+".png"
+        paths_vector.append(path)    
+        cv.imwrite(f'cinema_teach/static/cinema_teach/cache/{nom_fichier + "_vecteur_"+ str(int(frame+debut))}.png',image)
+    return paths_vector
+   
+
+
+
+        
+    
+            
+   
+
+
+
+
+
