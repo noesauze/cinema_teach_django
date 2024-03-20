@@ -28,8 +28,8 @@ def calculate_vitesses(frame,tab_donnes):
         
         t1=tab_donnes[frame][1]
         t2=tab_donnes[frame+1][1]
-        vx= tab_donnes[frame][0][linked_paquets[i][0]][0][0]-tab_donnes[frame+1][0][linked_paquets[i][1]][0][0]/t1-t2
-        vy= tab_donnes[frame][0][linked_paquets[i][0]][0][1]-tab_donnes[frame+1][0][linked_paquets[i][1]][0][1]/t1-t2
+        vx= (tab_donnes[frame][0][linked_paquets[i][0]][0][0]-tab_donnes[frame+1][0][linked_paquets[i][1]][0][0])/(t1-t2)
+        vy= (tab_donnes[frame][0][linked_paquets[i][0]][0][1]-tab_donnes[frame+1][0][linked_paquets[i][1]][0][1])/(t1-t2)
         list_vitesses.append([[vx,vy],[tab_donnes[frame+1][0][linked_paquets[i][1]][0][0],tab_donnes[frame+1][0][linked_paquets[i][1]][0][1]]])
     return list_vitesses #[[[vx,vy],[x2,y2]],...]
 
@@ -142,15 +142,15 @@ def affichage_vector(paths_centre,tab_donnes,nb_labels,nom_fichier,debut):
             
             list_vitesses=calculate_vitesses(frame-1,tab_donnes)
             
-            
+            x=0.08
             start=[int(list_vitesses[i][1][0]),int(list_vitesses[i][1][1])]
-            vector=[int(list_vitesses[i][0][0]),int(list_vitesses[i][0][1])]
+            vector=[int(list_vitesses[i][0][0]*x),int(list_vitesses[i][0][1]*x)]
             
            
             
             end_point = [start[0] + vector[0], start[1] + vector[1]]
             image=cv.arrowedLine(image, start, end_point, (0, 0, 255), thickness=2)
-            print(end_point)
+            
         path="/static/cinema_teach/cache/"+nom_fichier + "_vecteur_"+ str(int(frame+debut))+".png"
         paths_vector.append(path)    
         cv.imwrite(f'cinema_teach/static/cinema_teach/cache/{nom_fichier + "_vecteur_"+ str(int(frame+debut))}.png',image)
