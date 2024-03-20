@@ -189,43 +189,6 @@ def vider(request):
     return response
 
 
-def init_etalonnage_solide(request):
-
-    if request.method == 'POST':
-        debut = request.session['debut']
-        fin = request.session['fin']
-        
-        formulaire = FormulaireEtalonnageSolide(request.POST, initial={'debut': debut, 'fin': fin})
-        
-        if formulaire.is_valid():
-
-            nb_paquets_impose = formulaire.cleaned_data['nb_paquets_impose']
-            distance_paquets = formulaire.cleaned_data['distance_paquets']
-            seuil = formulaire.cleaned_data['seuil']
-            nom_fichier = request.session['nom_fichier']
-            tab_donnees = request.session['tab_donnees']
-            
-           
-            paths_traites, tab_donnees=img_traitement_solide.fichier_video_avec_points(nom_fichier,int(debut),int(fin),nb_paquets_impose,distance_paquets,seuil)
-            tab_donnees = json.loads(str(img_traitment.decoupe_temporelle(tab_donnees, int(debut), int(fin))))
-            
-            
-            request.session['path_traites'] = paths_traites
-            request.session['seuil']=seuil
-            request.session['nb_paquets_impose']=nb_paquets_impose
-            request.session['distance_paquets']=distance_paquets
-          
-            return render(request, 'cinema_teach/solide/solide-etalonnage.html', {'nom_fichier': nom_fichier, 'paths': paths_traites,  'formulaire':formulaire})
-        else:
-            print("non valide")
-            print(formulaire.errors)  # Afficher les erreurs de validation du formulaire
-  
-            # Le formulaire n'est pas valide, vous pouvez gérer les erreurs ici
-            pass
-    
-    
-    return render(request, 'cinema_teach/solide/solide-etalonnage.html', {})
-
 
 def etalonnage_solide(request):
 
@@ -278,20 +241,14 @@ def etalonnage_solide(request):
 
 def resultats_solide(request):
     if request.method == 'POST':
-        formulaire = FormulaireParametresSolide(request.POST)
-        if formulaire.is_valid():
-            debut = formulaire.cleaned_data['debut']
-            fin = formulaire.cleaned_data['fin']
-            nb_paquets_impose = formulaire.cleaned_data['nb_paquets_impose']
-            distance_paquets = formulaire.cleaned_data['distance_paquets']
-            seuil = formulaire.cleaned_data['seuil']
-            taille_objet = formulaire.cleaned_data['taille_objet']
+        
+        
+           
             nom_fichier = request.session['nom_fichier']
             tab_donnees = request.session['tab_donnees']
-            paths_traites, tab_donnees=img_traitement_solide.fichier_video_avec_points(nom_fichier,int(debut),int(fin),tab_donnees)
-            tab_donnees = json.loads(str(img_traitment.decoupe_temporelle(tab_donnees, int(debut), int(fin))))
-
-            request.session['path_traites'] = paths_traites
+            
+            paths_traites=request.session['path_traites']
+            taille_objet=request.session['taille_objet'] 
             
 
 
@@ -300,12 +257,7 @@ def resultats_solide(request):
 
 
             return render(request, 'cinema_teach/solide/solide-resultats.html', {'nom_fichier': nom_fichier, 'paths': paths_traites, 'image_data':image_data})
-        else:
-            print("non valide")
-            print(formulaire.errors)  # Afficher les erreurs de validation du formulaire
-
-            # Le formulaire n'est pas valide, vous pouvez gérer les erreurs ici
-            pass
+        
         
 
     return render(request, 'cinema_teach/solide/solide-resultats.html', {})

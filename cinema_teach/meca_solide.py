@@ -1,5 +1,6 @@
 import numpy as np
 from .meca_point import video_en_image
+from scipy.optimize import minimize
 
 def assign_paquets(frame,tab_donnes):
     
@@ -44,7 +45,7 @@ def cal_perpendiculaires(list_centroids):
         vect_perpendiculaire[k][1][0][0],vect_perpendiculaire[k][1][0][1]=-vect_perpendiculaire[k][1][0][1],vect_perpendiculaire[k][1][0][0]
     return vect_perpendiculaire
 
-
+'''''
 def cir(list_centroids): #probleme car pas forcement que deux paquets, ou faire varier la formule en fonction du nombre de points
     list_perpendiculaires=cal_perpendiculaires(list_centroids)
     n=len(list_centroids)
@@ -63,3 +64,57 @@ def cir(list_centroids): #probleme car pas forcement que deux paquets, ou faire 
         Py = ((Vy1 * x1 - Vx1 * y1) * (Vx2 * Vy2) - (Vx1 * y1 - Vy1 * x1) * (Vx2 * Vy2)) / (Vx1 * Vy2 - Vy1 * Vx2)
         CIR.append([Px,Py])
     return CIR
+'''
+
+
+def Param_Droites(list_perpendiculaires, frame):
+    
+    params=[]
+    for i in range(len(list_perpendiculaires[0])):
+        
+        
+        a=list_perpendiculaires[frame][i][0][1]/list_perpendiculaires[frame][i][0][0] #Vy/Vx pour la perpendiculaire
+        b=-(list_perpendiculaires[frame][i][0][1]/list_perpendiculaires[frame][i][0][0])*list_perpendiculaires[frame][i][1][0]+list_perpendiculaires[frame][i][1][1] #-Vy/Vx*x1+y1
+        
+        params.append([a,b])
+    
+        
+    return  params
+
+def distance_to_lines(point, *params):
+    x, y = point
+    distances = []
+    
+    for i in range(len(params[0])):
+        a=params[0][i][0]
+        b=params[0][i][1]
+        
+        # Calcul de la distance entre le point et la droite
+        distance = abs(a*x + b - y) / np.sqrt(a**2 + 1)
+        distances.append(distance)
+    
+    return sum(distances)
+
+
+def CIR(params):
+    # Point initial
+    initial_point = [0, 0]
+
+    # Minimisation de la distance
+    result = minimize(distance_to_lines, initial_point,args=(params,), method='Nelder-Mead')
+    closest_point = result.x
+
+
+    return closest_point
+
+
+def calcul_video_CIR(vect_perpendiculaire):
+    video_CIR=[]
+    for frame in range(len(vect_perpendiculaire)):
+        params=Param_Droites(vect_perpendiculaire, frame)
+        closest_point=CIR(params)
+        video_CIR.append(closest_point)
+    return video_CIR
+
+
+      
