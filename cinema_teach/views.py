@@ -23,6 +23,7 @@ from cinema_teach import meca_solide
 from django.http import HttpResponse
 from .meca_point import plot_fig
 from .meca_point import fill_table
+from .meca_solide import fill_table_solide
 
 
 
@@ -268,7 +269,9 @@ def resultats_solide(request):
             #image_data = plot_fig(tab_donnees_solide, int(taille_objet), "trajectory")
 
             
-
+            json_data = fill_table_solide(tab_donnees, 0)
+            request.session["json_data"] = json_data
+            print(json_data)
 
 
             return render(request, 'cinema_teach/solide/solide-resultats.html', {'nom_fichier': nom_fichier, 'paths': paths_vector})
