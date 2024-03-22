@@ -127,12 +127,11 @@ def calc_centre_paquets(centroids,sommets_connexes,nb_points_ensembles_final,sta
             if sommets_connexes[k][0]==val_ieme_premier+1:
                 index=k #indice de l'emplacement dans sommets_connexes de la valeur label qui regroupe les blocs 
         list_centroids.append([[centroids[val_ieme_premier+1][0],centroids[val_ieme_premier+1][1]],stats[val_ieme_premier+1][4]])
-    
         for j in range(1,len(sommets_connexes[index])):
             list_centroids[i][0][0]=(list_centroids[i][0][0]*list_centroids[i][1] + centroids[sommets_connexes[index][j]][0]*stats[sommets_connexes[index][j]][4])/(list_centroids[i][1]+stats[sommets_connexes[index][j]][4])
             list_centroids[i][0][1]=(list_centroids[i][0][1]*list_centroids[i][1] + centroids[sommets_connexes[index][j]][1]*stats[sommets_connexes[index][j]][4])/(list_centroids[i][1]+stats[sommets_connexes[index][j]][4])
             list_centroids[i][1]=list_centroids[i][1]+stats[sommets_connexes[index][j]][4]
-        
+
     return list_centroids #[[(x,y),nb points],...]
 
 
@@ -195,6 +194,7 @@ def new_image_paquet(image,nb_labels,labels):
 
 def fichier_video_avec_points(nom_fichier,debut,fin,nb_paquets_impose,distance_paquets,seuil):
     paths=[]
+    paths_centre=[]
     tab_donne=[]
     k=0
     video=cv.VideoCapture("media/"+nom_fichier)
@@ -203,41 +203,57 @@ def fichier_video_avec_points(nom_fichier,debut,fin,nb_paquets_impose,distance_p
     for frame in range (debut,fin+1):
         nom = "cinema_teach/static/cinema_teach/cache/"+ nom_fichier + "_"+ str(frame)+".png"
         image=cv.imread(f"{nom}")
+        image_centre=cv.imread(f"{nom}")
         nb_labels,labels,stats,centroids=calcul_masque_solide(image=image,gray_fond=gray_fond,seuil=seuil)
-        print(frame)
+
         if nb_labels>=nb_paquets_impose:
             sommets_connexes=mat_adj_paquets(nb_labels,centroids, distance_paquets)
             labels=agglomerer_paquets(labels=labels,sommets_connexes=sommets_connexes)
             nb_points_ensembles_final=selec_paquets(sommets_connexes=sommets_connexes,stats=stats,nb_paquets_impose=nb_paquets_impose)
             labels=reduc_nb_paquets(labels, nb_points_ensembles_final)
-            image=new_image_paquet(image,nb_labels,labels)
-        
             tab_donne.append((calc_centre_paquets(centroids,sommets_connexes,nb_points_ensembles_final,stats,nb_paquets_impose),frame/(video.get(cv.CAP_PROP_FPS))))
-            print('len tab')
-            print(len(tab_donne))
-            print(frame-debut-k)
-            #[[[(x,y),nb points],...],time]
+           
             for j in range(nb_paquets_impose):
                 
-                image=cv.circle(image,(int(tab_donne[frame-debut-k][0][j][0][0]),int(tab_donne[frame-debut-k][0][j][0][1])),5,(0,0,255),-1)
+                image_centre=cv.circle(image_centre,(int(tab_donne[frame-debut-k][0][j][0][0]),int(tab_donne[frame-debut-k][0][j][0][1])),5,(0,0,255),-1)
+            
+            path_centre="/static/cinema_teach/cache/"+nom_fichier + "_centre_"+ str(frame)+".png"
+            cv.imwrite(f'cinema_teach/static/cinema_teach/cache/{nom_fichier + "_centre_"+ str(frame)}.png',image_centre)
+            paths_centre.append(path_centre)
+
+            image=new_image_paquet(image,nb_labels,labels)
+        
+            #[[[(x,y),nb points],...],time]
+            
         else :
             k=k+1
             print('k=')
-            print(k)
+            
         path="/static/cinema_teach/cache/"+nom_fichier + "_traite_"+ str(frame)+".png"
         cv.imwrite(f'cinema_teach/static/cinema_teach/cache/{nom_fichier + "_traite_"+ str(frame)}.png',image)
         paths.append(path)
-        print(path)
-    
-    return paths,tab_donne #comporte que les données où il y a quelque chose à voir
+        
+    return paths,tab_donne,paths_centre #comporte que les données où il y a quelque chose à voir
 
 
 
 
 
     
-
-
+# Fonction de conversion pour gérer la sérialisation des tableaux NumPy et autres objets non sérialisables en JSON
+def convert_to_json_serializable(obj):
+    if isinstance(obj, np.ndarray):
+        return obj.tolist()  # Convertir les tableaux NumPy en listes Python
+    elif isinstance(obj, np.float64):
+        return float(obj)  # Convertir les numpy.float64 en float Python
+    elif isinstance(obj, np.intc):
+        return int(obj)  # Convertir les numpy.intc en int Python
+    elif isinstance(obj, tuple):
+        return [convert_to_json_serializable(item) for item in obj]
+    elif isinstance(obj, list):
+        return [convert_to_json_serializable(item) for item in obj]
+    else:
+        return obj
 
 
 
