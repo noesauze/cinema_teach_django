@@ -2,6 +2,7 @@ import numpy as np
 
 import matplotlib as plt
 import cv2 as cv
+from scipy.optimize import minimize
 
 
 
@@ -158,18 +159,19 @@ def affichage_vector(paths_centre,tab_donnes,nb_labels,nom_fichier,debut):
 
 
 
-def fill_table_solide(tab_donnees, dis_conversion):
+def fill_table_solide(tab_donnees):
      #Remplissage du tableau
         data = []
+        print(tab_donnees)
         list_vitesses=video_vitesses(tab_donnees)
+        
         vect_perpendiculaires=cal_perpendiculaires(list_vitesses)
         video_CIR=calcul_video_CIR(vect_perpendiculaires)
         n = len(video_CIR)
-        print("CIR")
-        print(video_CIR)
+        
         for i in range(n):
             item = {
-                "image": i,
+                "image": i+1,
                 "cir_x": round(video_CIR[i][0], 2),
                 "cir_y": round(video_CIR[i][1], 2),
             }

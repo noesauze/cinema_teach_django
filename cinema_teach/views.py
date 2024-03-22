@@ -269,7 +269,7 @@ def resultats_solide(request):
             #image_data = plot_fig(tab_donnees_solide, int(taille_objet), "trajectory")
 
             
-            json_data = fill_table_solide(tab_donnees, 0)
+            json_data = fill_table_solide(tab_donnees_solide)
             request.session["json_data"] = json_data
             print(json_data)
 
