@@ -159,7 +159,45 @@ def affichage_vector(paths_centre,tab_donnes,nb_labels,nom_fichier,debut):
 
 
 
+def fill_table(tab_donnees, dis_conversion):
+     #Remplissage du tableau
+        data = []
+        list_vitesses=video_vitesses(tab_donnees)
+        vect_perpendiculaires=cal_perpendiculaires(list_vitesses)
+        video_CIR=calcul_video_CIR(vect_perpendiculaires)
+        n = len(tab_donnees)
+        print("CIR")
+        print(speeds)
+        for i in range(n):
+            if(i>=start_speeds and i < start_speeds+len(speeds)):
+                vitesse = speeds[i-start_speeds]
+            else:
+                vitesse = 0
+            if(i>=start_accel and i < start_accel+len(accelerations)):
+                accel = accelerations[i-start_accel]
+            else:
+                accel = 0
+            if(i>=start_deplacement and i < start_deplacement+len(deplacement)):
+                dep = deplacement[i-start_deplacement]
+            else:
+                dep = 0
+            item = {
+                "image": i,
+                "deplacement": round(dep, 2),
+                "vitesse": round(vitesse, 2),
+                "acceleration": round(accel, 2)
+            }
+            data.append(item)
         
+        res = {
+            "total": len(data),
+            "totalNotFiltered": len(data),
+            "rows": data
+        }
+
+        json_data = res
+
+        return json_data
     
             
    
